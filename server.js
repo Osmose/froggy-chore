@@ -37,9 +37,15 @@ app.get('/restaurants/random', function(request, response) {
 // POST /restaurants HEADER(Authentication: password) BODY({name: 'Foobar baz'})
 
 app.post('/restaurants/add', function(request, response) {
+  if (request.get('Authorization') !== process.env.PASSWORD) {
+    response.status(401).send('Unauthorized');
+    return;
+  }
+  db.get('SELECT count
+  
   const newRestaurant = "Wendy\'s"
   db.run('INSERT INTO restaurants (name) VALUES (?)', newRestaurant, error => {
-    response.status(200).send
+    response.status(200).send('ok!')
   });    
 });
 // Return 200 if inserted

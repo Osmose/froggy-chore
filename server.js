@@ -18,7 +18,7 @@ db.serialize(function() {
     
     // insert default dreams
     db.serialize(function() {
-      db.run('INSERT INTO restaurants (name) VALUES ("BK\' Brewhouse"), ("Red Robin"), ("IHOP"), ("Old Spaghetti Factory")');
+      db.run('INSERT INTO restaurants (name) VALUES ("BK\'s Brewhouse"), ("Red Robin"), ("IHOP"), ("Old Spaghetti Factory")');
     });
   }
 });
@@ -36,11 +36,14 @@ app.get('/restaurants/random', function(request, response) {
 
 // POST /restaurants HEADER(Authentication: password) BODY({name: 'Foobar baz'})
 
-app.post('/restaurants/random', function(request, response) {
-  db.all('INSERT INTO restaurants (name) VALUES ?'
+app.post('/restaurants/add', function(request, response) {
+  const newRestaurant = "Wendy\'s"
+  db.all('INSERT INTO restaurants (name) VALUES ?', newRestaurant, (request, response) => {
+    // Return 200 if inserted
+    // return 409 if restaurant with matching name already exists
+  })    
 });
-// Return 200 if inserted
-// return 409 if restaurant with matching name already exists
+
 
 // listen for requests :)
 const listener = app.listen(process.env.PORT, function() {

@@ -10,8 +10,6 @@ function randomRestaurant(){
   return restaurants[index];
 }
 
-document.querySelector('#choose-button').addEventListener('click', event => {
-  if (event.target.matches('#model > *')) {
-    do nothi
+document.querySelector('#choose-button').addEventListener('click', () => {
   document.querySelector('#title').innerText = randomRestaurant();  
 });

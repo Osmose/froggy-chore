@@ -4,6 +4,13 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const sqlite3 = require('sqlite3').verbose();
 
+const RESTAURANTS = [
+  'BJ\'s Brewhouse',
+  'Red Robin',
+  'IHOP',
+  'Old Spaghetti Factory',
+];
+
 const app = express();
 
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -14,20 +21,11 @@ const exists  = fs.existsSync(dbFile);
 const db = new sqlite3.Database(dbFile);
 db.serialize(function() {
   if (!exists) {
-    db.run('CREATE TABLE Dreams (dream TEXT)');
-    console.log('New table Dreams created!');
+    db.run('CREATE TABLE restaurants (name VARCHAR(255))');
     
     // insert default dreams
     db.serialize(function() {
-      db.run('INSERT INTO Dreams (dream) VALUES ("Find and count some sheep"), ("Climb a really tall mountain"), ("Wash the dishes")');
-    });
-  }
-  else {
-    console.log('Database "Dreams" ready to go!');
-    db.each('SELECT * from Dreams', function(err, row) {
-      if ( row ) {
-        console.log('record:', row);
-      }
+      db.run('INSERT INTO restaurants (name) VALUES ("Find and count some sheep"), ("Climb a really tall mountain"), ("Wash the dishes")');
     });
   }
 });
@@ -36,10 +34,17 @@ app.get('/', function(request, response) {
   response.sendFile(__dirname + '/views/index.html');
 });
 
-app.get('/getDreams', function(request, response) {
-  db.all('SELECT * from Dreams', function(err, rows) {
-    response.send(JSON.stringify(rows));
-  });
+// app.get('/getDreams', function(request, response) {
+//   db.all('SELECT * from Dreams', function(err, rows) {
+//     response.send(JSON.stringify(rows));
+//   });
+// });
+
+// GET /restaurants/random
+// Return 200 with body {"name": "IHOP"}
+
+app.get('/restaurants/random', function(request, response) {
+  
 });
 
 // listen for requests :)

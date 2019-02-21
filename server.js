@@ -34,6 +34,12 @@ app.get('/restaurants/random', function(request, response) {
   });
 });
 
+// POST /restaurants HEADER(Authentication: password) BODY({name: 'Foobar baz'})
+
+app.post('/restaurants/random', function(request, response)
+// Return 200 if inserted
+// return 409 if restaurant with matching name already exists
+
 // listen for requests :)
 const listener = app.listen(process.env.PORT, function() {
   console.log('Your app is listening on port ' + listener.address().port);

@@ -4,13 +4,6 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const sqlite3 = require('sqlite3').verbose();
 
-const RESTAURANTS = [
-  {name: 'BJ\'s Brewhouse'},
-  {name: 'Red Robin'},
-  {name: 'IHOP'},
-  {name: 'Old Spaghetti Factory'},
-];
-
 const app = express();
 
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -25,7 +18,7 @@ db.serialize(function() {
     
     // insert default dreams
     db.serialize(function() {
-      db.run('INSERT INTO restaurants (name) VALUES ("Find and count some sheep"), ("Climb a really tall mountain"), ("Wash the dishes")');
+      db.run('INSERT INTO restaurants (name) VALUES ("BK\' Brewhouse"), ("Red Robin"), ("IHOP"), ("Old Spaghetti Factory")');
     });
   }
 });
@@ -34,18 +27,11 @@ app.get('/', function(request, response) {
   response.sendFile(__dirname + '/views/index.html');
 });
 
-// app.get('/getDreams', function(request, response) {
-//   db.all('SELECT * from Dreams', function(err, rows) {
-//     response.send(JSON.stringify(rows));
-//   });
-// });
-
-// GET /restaurants/random
-// Return 200 with body {"name": "IHOP"}
-
 app.get('/restaurants/random', function(request, response) {
-  const index = Math.floor(Math.random() * RESTAURANTS.length);
-  response.send(RESTAURANTS[index]);
+  db.all('SELECT * FROM restaurants', (error, restaurants) => {
+    const index = Math.floor(Math.random() * restaurants.length);
+    response.send(restaurants[index]);
+  });
 });
 
 // listen for requests :)

@@ -36,7 +36,9 @@ app.get('/restaurants/random', function(request, response) {
 
 // POST /restaurants HEADER(Authentication: password) BODY({name: 'Foobar baz'})
 
-app.post('/restaurants/random', function(request, response)
+app.post('/restaurants/random', function(request, response) {
+  db.all('INSERT INTO restaurants (name) VALUES ?'
+});
 // Return 200 if inserted
 // return 409 if restaurant with matching name already exists
 

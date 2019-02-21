@@ -5,10 +5,10 @@ const bodyParser = require('body-parser');
 const sqlite3 = require('sqlite3').verbose();
 
 const RESTAURANTS = [
-  'BJ\'s Brewhouse',
-  'Red Robin',
-  'IHOP',
-  'Old Spaghetti Factory',
+  {name: 'BJ\'s Brewhouse'},
+  {name: 'Red Robin'},
+  {name: 'IHOP'},
+  {name: 'Old Spaghetti Factory'},
 ];
 
 const app = express();
@@ -44,7 +44,8 @@ app.get('/', function(request, response) {
 // Return 200 with body {"name": "IHOP"}
 
 app.get('/restaurants/random', function(request, response) {
-  
+  const index = Math.floor(Math.random() * RESTAURANTS.length);
+  response.send(RESTAURANTS[index]);
 });
 
 // listen for requests :)

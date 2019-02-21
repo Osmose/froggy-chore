@@ -1,13 +1,7 @@
-const restaurants = [
-  'BJ\'s Brewhouse',
-  'Red Robin',
-  'IHOP',
-  'Old Spaghetti Factory',
-];
-
-function randomRestaurant(){
-  const index = Math.floor(Math.random() * restaurants.length);
-  return restaurants[index];
+async function randomRestaurant() {
+  // query api for random restaurant
+  
+  // return name of restaurant returned from the server
 }
 
 document.querySelector('#choose-button').addEventListener('click', () => {

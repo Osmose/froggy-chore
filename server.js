@@ -41,7 +41,10 @@ app.post('/restaurants/add', function(request, response) {
     response.status(401).send('Unauthorized');
     return;
   }
-  db.get('SELECT count
+  db.get('SELECT COUNT(*) FROM restaurants WHERE name = (?)', newRestaurant, (error, row) {
+    if (row > 0) {
+    
+  })
   
   const newRestaurant = "Wendy\'s"
   db.run('INSERT INTO restaurants (name) VALUES (?)', newRestaurant, error => {

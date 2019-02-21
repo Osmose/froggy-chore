@@ -38,11 +38,13 @@ app.get('/restaurants/random', function(request, response) {
 
 app.post('/restaurants/add', function(request, response) {
   const newRestaurant = "Wendy\'s"
-  db.all('INSERT INTO restaurants (name) VALUES ?', newRestaurant, (request, response) => {
-    // Return 200 if inserted
-    // return 409 if restaurant with matching name already exists
-  })    
+  db.run('INSERT INTO restaurants (name) VALUES (?)', newRestaurant, error => {
+    response.status(200).send
+  });    
 });
+// Return 200 if inserted
+// return 409 if restaurant with matching name already exists
+
 
 
 // listen for requests :)

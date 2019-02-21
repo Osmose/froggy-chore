@@ -8,7 +8,9 @@ const restaurants = [
 function pickplace(){
   console.log();
   // 1. pick random restaurnt from list
+  const restaurantName = randomRestaurant();
   // 2. get handle to h1
+  const header = document.querySelector('#title');
   // 3. set innerText of h1 to restaurnat
 }
 

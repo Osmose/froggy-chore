@@ -5,3 +5,7 @@ const restaurants = [
   'Old Spaghetti Factory',
 ];
 
+function pickplace(){
+  console.log('hi')
+  return "IHOP"
+}

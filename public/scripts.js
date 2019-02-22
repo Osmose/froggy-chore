@@ -16,4 +16,17 @@ document.querySelector('#new-restaurant').addEventListener('submit', async funct
     name: formData.get('name'),
   };
   
+  const response = await fetch('/restaurants/add', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': formData.get('password'),
+    },
+    body: JSON.stringify(newRestaurant),
+  });
+  if (!response.ok) {
+    window.alert(await response.text());
+  } else {
+    window.alert( `${newRestaurant.name + ' added!');
+  }
 });

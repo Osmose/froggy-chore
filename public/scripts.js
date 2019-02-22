@@ -27,6 +27,6 @@ document.querySelector('#new-restaurant').addEventListener('submit', async funct
   if (!response.ok) {
     window.alert(await response.text());
   } else {
-    window.alert( `${newRestaurant.name + ' added!');
+    window.alert(`${newRestaurant.name} added!`);
   }
 });

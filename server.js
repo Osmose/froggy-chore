@@ -62,10 +62,6 @@ app.post('/restaurants/add', async function(request, response) {
     response.status(200).send('ok!')
   });    
 });
-// Return 200 if inserted
-// return 409 if restaurant with matching name already exists
-
-
 
 // listen for requests :)
 const listener = app.listen(process.env.PORT, function() {

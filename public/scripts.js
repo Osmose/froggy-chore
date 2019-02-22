@@ -4,6 +4,16 @@ async function randomRestaurantName() {
   return restaurant.name;
 }
 
-document.querySelector('#choose-button').addEventListener('click', async () => {
+document.querySelector('#choose-button').addEventListener('click', async function() {
   document.querySelector('#title').innerText = await randomRestaurantName();  
+});
+
+document.querySelector('#new-restaurant').addEventListener('submit', async function(event) {
+  event.preventDefault();
+  
+  const formData = new FormData(this);
+  const newRestaurant = {
+    name: formData.get('name'),
+  };
+  
 });

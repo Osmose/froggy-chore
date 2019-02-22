@@ -6,8 +6,8 @@ const sqlite3 = require('sqlite3').verbose();
 
 const app = express();
 
-app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static('public'));
+app.use(express.json());
 
 const dbFile = './.data/sqlite.db';
 const exists  = fs.existsSync(dbFile);
@@ -27,6 +27,12 @@ app.get('/', function(request, response) {
   response.sendFile(__dirname + '/views/index.html');
 });
 
+app.get('/restaurants', function(request, response) {
+  db.all('SELECT * FROM restaurants', (error, restaurants) => {
+    response.send(restaurants);
+  });
+});
+
 app.get('/restaurants/random', function(request, response) {
   db.all('SELECT * FROM restaurants', (error, restaurants) => {
     const index = Math.floor(Math.random() * restaurants.length);
@@ -36,18 +42,25 @@ app.get('/restaurants/random', function(request, response) {
 
 // POST /restaurants HEADER(Authentication: password) BODY({name: 'Foobar baz'})
 
-app.post('/restaurants/add', function(request, response) {
+app.post('/restaurants/add', async function(request, response) {
   if (request.get('Authorization') !== process.env.PASSWORD) {
     response.status(401).send('Unauthorized');
     return;
   }
-  db.get('SELECT COUNT(*) FROM restaurants WHERE name = (?)', newRestaurant, (error, row) {
-    if (row > 0) {
-    
-  })
   
-  const newRestaurant = "Wendy\'s"
-  db.run('INSERT INTO restaurants (name) VALUES (?)', newRestaurant, error => {
+  const newRestaurantName = request.body.name;
+  const exists = await new Promise(resolve => {
+    db.get('SELECT COUNT(*) FROM restaurants WHERE name = (?)', newRestaurantName, (error, row) => {
+      resolve(row['COUNT(*)'] > 0);    
+    });  
+  });
+  
+  if (exists) {
+    response.status(409).send('Already exists');
+    return;
+  }
+  
+  db.run('INSERT INTO restaurants (name) VALUES (?)', newRestaurantName, error => {
     response.status(200).send('ok!')
   });    
 });

@@ -40,8 +40,6 @@ app.get('/restaurants/random', function(request, response) {
   });
 });
 
-// POST /restaurants HEADER(Authentication: password) BODY({name: 'Foobar baz'})
-
 app.post('/restaurants/add', async function(request, response) {
   if (request.get('Authorization') !== process.env.PASSWORD) {
     response.status(401).send('Unauthorized');

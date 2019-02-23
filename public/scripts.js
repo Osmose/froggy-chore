@@ -7,13 +7,16 @@ async function randomRestaurantName() {
 async function getRestaurantList(){
   const response = await fetch('/restaurants');
   const restaurantList = await response.json();
-  console.log(restaurantList)
+  console.log(restaurantList);
+  // Osmose: What is this function returning?
+  // sam: a list of 
 } 
 
 async function buildRestaurantList(){
   const list = await getRestaurantList();
   let buildList = []
-  console.log(list);
+  console.log(list); // Sam: this is undefind, it seems like it is because this line runs before list has been set. I thought that the rest of a function will continue to run even if there is a line that is being awaited?
+  
   // Osmose: At this point `list` is a list of items, there's no more promises to await
   list.foreach(function(item){
     buildList.append('<li>' + item.name + '</li>'); 

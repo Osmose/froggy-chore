@@ -11,9 +11,13 @@ async function getRestaurantList(){
 
 async function buildRestaurantList(){
   const list = await getRestaurantList();
+  let buildList = []
   list.foreach(async (item) => {
-    
+    buildList.append('<li>' + await item.name + '</li>'); 
+    console.log(await item.name);
   })
+  document.querySelector('#restaurant-list').innerHTML = await buildList;
+  
 }
 
 document.querySelector('#choose-button').addEventListener('click', async function() {

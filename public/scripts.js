@@ -27,8 +27,13 @@ document.querySelector('#choose-button').addEventListener('click', async functio
   document.querySelector('#title').innerText = await randomRestaurantName();  
 });
 
-document.querySelector('#delete-button').addEventListener('click', function(event) {
-   document.querySelector('#
+document.querySelector('#delete-button').addEventListener('click', function() {
+   const editMode = document.getAttribute('edit-mode')
+   if (editMode === 'false'){
+     console.log("false")
+     document.querySelector('#delete-button').setAttribute('edit-mode', 'true') 
+   }
+   elseif
 });
 
 document.querySelector('#new-restaurant').addEventListener('submit', async function(event) {
@@ -53,18 +58,6 @@ document.querySelector('#new-restaurant').addEventListener('submit', async funct
     window.alert(`${newRestaurant.name} added!`);
   }
   await buildRestaurantList();
-});
-
-document.body.addEventListener('click', function(event) {
-  console.log(document.querySelector('.editable'))
-  console.log(document.querySelector('.not_editable'))
-  
-  if (document.querySelector('.editable').contains(event.target)){
-    console.log("click");  
-  }
-  if (document.querySelector('.not_editable').contains(event.target)){
-    console.log("click");  
-  }
 });
 
 // Could just pass `buildRestaurantList` as the callback instead of creating a new function, e.g. `document.addEventListener('DOMContentLoaded', buildRestaurantList)`

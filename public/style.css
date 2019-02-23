@@ -65,7 +65,7 @@ button:active {
   box-shadow: none;
 }
 
-ul {
+#restaurant-list {
   list-style-type: none;
   background: #9714ef;
   border-radius: 3px;
@@ -75,7 +75,7 @@ ul {
   box-shadow: 2px 2px #3c0166;
 }
 
-li {
+#restaurant-list li {
   margin-bottom: 5px;
   background: #e7c4ff;
   border-radius: 2px;

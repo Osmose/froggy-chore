@@ -7,16 +7,19 @@ async function randomRestaurantName() {
 async function getRestaurantList(){
   const response = await fetch('/restaurants');
   const restaurantList = await response.json();
+  console.log(restaurantList)
 } 
 
 async function buildRestaurantList(){
   const list = await getRestaurantList();
   let buildList = []
-  await list.foreach(async function(item){
-    buildList.append('<li>' + await item.name + '</li>'); 
-    console.log(await item.name);
+  console.log(list);
+  // Osmose: At this point `list` is a list of items, there's no more promises to await
+  list.foreach(function(item){
+    buildList.append('<li>' + item.name + '</li>'); 
+    console.log(item.name);
   })
-  document.querySelector('#restaurant-list').innerHTML = await buildList;
+  document.querySelector('#restaurant-list').innerHTML = buildList;
   
 }
 

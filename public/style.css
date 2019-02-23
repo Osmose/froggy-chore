@@ -85,8 +85,12 @@ button:active {
   padding-left: 2px;
 }
 
-#restaurant-list li:hover {
-  background-color: yellow;
+#restaurant-list .not-editable:hover {
+  background-color: #e3dce8;
+}
+
+#restaurant-list .editable:hover {
+  background-color: red;
 }
 
 footer {

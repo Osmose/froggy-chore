@@ -5,7 +5,8 @@ async function randomRestaurantName() {
 }
 
 async function getRestaurantList(){
-  
+  const response = await fetch('/restaurants');
+  const restaurantList = await
 } 
 
 document.querySelector('#choose-button').addEventListener('click', async function() {

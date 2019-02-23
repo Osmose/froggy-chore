@@ -28,12 +28,16 @@ document.querySelector('#choose-button').addEventListener('click', async functio
 });
 
 document.querySelector('#delete-button').addEventListener('click', function() {
-   const editMode = document.getAttribute('edit-mode')
+   const button = document.querySelector('#delete-button')
+   const editMode = button.getAttribute('edit-mode');
    if (editMode === 'false'){
-     console.log("false")
-     document.querySelector('#delete-button').setAttribute('edit-mode', 'true') 
+     button.setAttribute('edit-mode', 'true');
+     button.textContent = 'Stop Deleting Restaurants';
    }
-   elseif
+   else if (editMode === 'true'){
+     button.setAttribute('edit-mode', 'false');
+     button.textContent = 'Delete Restaurant(s)';
+   }
 });
 
 document.querySelector('#new-restaurant').addEventListener('submit', async function(event) {

@@ -15,7 +15,7 @@ async function buildRestaurantList(){
   const list = await getRestaurantList();
   let buildList = [];
   list.forEach(function(item){
-    buildList = buildList + ('<li id="restaurant-name">' + item.name + '</li>'); 
+    buildList = buildList + (`<li id="restaurant-name">` + `${item.name}` + `</li>`); 
   })
   document.querySelector('#restaurant-list').innerHTML = buildList;
   

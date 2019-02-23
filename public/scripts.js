@@ -6,8 +6,12 @@ async function randomRestaurantName() {
 
 async function getRestaurantList(){
   const response = await fetch('/restaurants');
-  const restaurantList = await
+  const restaurantList = await response.json();
 } 
+
+async function buildRestaurantList(){
+  await
+}
 
 document.querySelector('#choose-button').addEventListener('click', async function() {
   document.querySelector('#title').innerText = await randomRestaurantName();  
@@ -35,3 +39,4 @@ document.querySelector('#new-restaurant').addEventListener('submit', async funct
     window.alert(`${newRestaurant.name} added!`);
   }
 });
+

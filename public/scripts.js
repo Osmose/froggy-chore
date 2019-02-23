@@ -10,7 +10,10 @@ async function getRestaurantList(){
 } 
 
 async function buildRestaurantList(){
-  await
+  const list = await getRestaurantList();
+  list.foreach(async (item) => {
+    
+  })
 }
 
 document.querySelector('#choose-button').addEventListener('click', async function() {

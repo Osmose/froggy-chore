@@ -85,6 +85,10 @@ button:active {
   padding-left: 2px;
 }
 
+#restaurant-list li:hover {
+  background-color: yellow;
+}
+
 footer {
   margin-top: 50px;
   padding-top: 25px;

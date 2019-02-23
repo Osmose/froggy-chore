@@ -14,15 +14,15 @@ async function getRestaurantList(){
 async function buildRestaurantList(){
   const list = await getRestaurantList();
   const ul = document.querySelector('#restaurant-list');
-  const li = document.createElement("li");
-  ul.innerHTML = ""
-  list.forEach(function(item){
-    li.appendChild(document.createTextNode(item.name));
-    li.setAttribute("id", "not-editable");
+  // Could also use a documentFragment to build the list of lis and use replaceChild to replace the contents of the list in one step
+  // https://developer.mozilla.org/en-US/docs/Web/API/Document/createDocumentFragment
+  ul.innerHTML = ""; 
+  list.forEach(function(item){ // for (const item of list) is my preferred format but it's purely a preference
+    const li = document.createElement("li");
+    li.appendChild(document.createTextNode(item.name)); // li.textContent = item.name should work here as well
+    li.setAttribute("class", "not-editable"); // Alternatives would be: `li.className = 'not-editable'` or `li.classList.add('not-editable')`.
     ul.appendChild(li);
-    
-  })
-  
+  })  
 }
 
 document.querySelector('#choose-button').addEventListener('click', async function() {
@@ -53,6 +53,7 @@ document.querySelector('#new-restaurant').addEventListener('submit', async funct
   await buildRestaurantList();
 });
 
+// Could just pass `buildRestaurantList` as the callback instead of creating a new function, e.g. `document.addEventListener('DOMContentLoaded', buildRestaurantList)`
 document.addEventListener("DOMContentLoaded", async function() {
   await buildRestaurantList();
 });

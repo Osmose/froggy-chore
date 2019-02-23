@@ -27,8 +27,8 @@ document.querySelector('#choose-button').addEventListener('click', async functio
   document.querySelector('#title').innerText = await randomRestaurantName();  
 });
 
-document.querySelector('#delete-button').addEventListener('click', function() {
-   
+document.querySelector('#delete-button').addEventListener('click', function(event) {
+   document.querySelector('#
 });
 
 document.querySelector('#new-restaurant').addEventListener('submit', async function(event) {
@@ -56,7 +56,13 @@ document.querySelector('#new-restaurant').addEventListener('submit', async funct
 });
 
 document.body.addEventListener('click', function(event) {
+  console.log(document.querySelector('.editable'))
+  console.log(document.querySelector('.not_editable'))
+  
   if (document.querySelector('.editable').contains(event.target)){
+    console.log("click");  
+  }
+  if (document.querySelector('.not_editable').contains(event.target)){
     console.log("click");  
   }
 });

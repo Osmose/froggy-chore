@@ -13,11 +13,15 @@ async function getRestaurantList(){
 
 async function buildRestaurantList(){
   const list = await getRestaurantList();
-  let buildList = [];
+  const ul = document.querySelector('#restaurant-list');
+  const li = document.createElement("li");
+  ul.innerHTML = ""
   list.forEach(function(item){
-    buildList = buildList + ('<li id="restaurant-name">' + `${document.documentElement.textContent = item.name}` + '</li>'); 
+    li.appendChild(document.createTextNode(item.name));
+    li.setAttribute("id", "not-editable");
+    ul.appendChild(li);
+    
   })
-  document.querySelector('#restaurant-list').innerHTML = buildList;
   
 }
 

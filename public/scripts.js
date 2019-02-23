@@ -14,8 +14,6 @@ async function getRestaurantList(){
 async function buildRestaurantList(){
   const list = await getRestaurantList();
   const ul = document.querySelector('#restaurant-list');
-  // Could also use a documentFragment to build the list of lis and use replaceChild to replace the contents of the list in one step
-  // https://developer.mozilla.org/en-US/docs/Web/API/Document/createDocumentFragment
   ul.innerHTML = ""; 
   list.forEach(function(item){ // for (const item of list) is my preferred format but it's purely a preference
     const li = document.createElement("li");
@@ -54,6 +52,8 @@ document.querySelector('#new-restaurant').addEventListener('submit', async funct
 });
 
 // Could just pass `buildRestaurantList` as the callback instead of creating a new function, e.g. `document.addEventListener('DOMContentLoaded', buildRestaurantList)`
+// The script tag in the page is also located after the HTML we depend on, so it's guaranteed to be parsed by the time this code runs, meaning we could also
+// just call buildRestaurantList directly
 document.addEventListener("DOMContentLoaded", async function() {
   await buildRestaurantList();
 });

@@ -15,7 +15,7 @@ async function buildRestaurantList(){
   const list = await getRestaurantList();
   let buildList = [];
   list.forEach(function(item){
-    buildList = buildList + ('<li>' + item.name + '</li>'); 
+    buildList = buildList + ('<li id="restaurant-name">' + item.name + '</li>'); 
   })
   document.querySelector('#restaurant-list').innerHTML = buildList;
   
@@ -51,4 +51,9 @@ document.querySelector('#new-restaurant').addEventListener('submit', async funct
 
 document.addEventListener("DOMContentLoaded", async function() {
   await buildRestaurantList();
+});
+
+document.body.addEventListener('click', function() {
+  if
+  console.log("click");  
 });

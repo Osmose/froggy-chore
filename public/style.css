@@ -60,8 +60,18 @@ button:active {
   box-shadow: none;
 }
 
+ul {
+  list-style-type: none;
+  background: #9714ef;
+  border-radius: 3px;
+  padding: 20px;
+}
+
 li {
   margin-bottom: 5px;
+  background: #e7c4ff;
+  border-radius: 2px;
+  margin: 5px;
 }
 
 footer {

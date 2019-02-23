@@ -21,7 +21,7 @@ async function buildRestaurantList(){
   
   // Osmose: At this point `list` is a list of items, there's no more promises to await
   list.forEach(function(item){
-    buildList.append('<li>' + item.name + '</li>'); 
+    buildList = buildList + ('<li>' + item.name + '</li>'); 
     console.log(item.name);
   })
   document.querySelector('#restaurant-list').innerHTML = buildList;

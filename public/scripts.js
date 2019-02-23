@@ -12,7 +12,7 @@ async function getRestaurantList(){
 async function buildRestaurantList(){
   const list = await getRestaurantList();
   let buildList = []
-  list.foreach(async (item) => {
+  await list.foreach(async function(item){
     buildList.append('<li>' + await item.name + '</li>'); 
     console.log(await item.name);
   })
@@ -47,3 +47,6 @@ document.querySelector('#new-restaurant').addEventListener('submit', async funct
   }
 });
 
+document.addEventListener("DOMContentLoaded", async function() {
+  await buildRestaurantList();
+});

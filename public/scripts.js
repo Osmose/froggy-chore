@@ -4,6 +4,10 @@ async function randomRestaurantName() {
   return restaurant.name;
 }
 
+async function getRestaurantList(){
+  
+} 
+
 document.querySelector('#choose-button').addEventListener('click', async function() {
   document.querySelector('#title').innerText = await randomRestaurantName();  
 });

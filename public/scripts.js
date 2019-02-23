@@ -27,6 +27,10 @@ document.querySelector('#choose-button').addEventListener('click', async functio
   document.querySelector('#title').innerText = await randomRestaurantName();  
 });
 
+document.querySelector('#delete-button').addEventListener('click', function() {
+   
+});
+
 document.querySelector('#new-restaurant').addEventListener('submit', async function(event) {
   event.preventDefault();
   

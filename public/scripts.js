@@ -27,19 +27,6 @@ document.querySelector('#choose-button').addEventListener('click', async functio
   document.querySelector('#title').innerText = await randomRestaurantName();  
 });
 
-document.querySelector('#delete-button').addEventListener('click', function() {
-   const button = document.querySelector('#delete-button')
-   const editMode = button.getAttribute('edit-mode');
-   if (editMode === 'false'){
-     button.setAttribute('edit-mode', 'true');
-     button.textContent = 'Stop Deleting Restaurants';
-   }
-   else if (editMode === 'true'){
-     button.setAttribute('edit-mode', 'false');
-     button.textContent = 'Delete Restaurant(s)';
-   }
-});
-
 document.querySelector('#new-restaurant').addEventListener('submit', async function(event) {
   event.preventDefault();
   
@@ -63,6 +50,25 @@ document.querySelector('#new-restaurant').addEventListener('submit', async funct
   }
   await buildRestaurantList();
 });
+
+document.querySelector('#delete-button').addEventListener('click', function() {
+   const button = document.querySelector('#delete-button')
+   const editMode = button.getAttribute('edit-mode');
+   if (editMode === 'false'){
+     button.setAttribute('edit-mode', 'true');
+     button.textContent = 'Stop Deleting Restaurants';
+   }
+   else if (editMode === 'true'){
+     button.setAttribute('edit-mode', 'false');
+     button.textContent = 'Delete Restaurant(s)';
+   }
+});
+
+document.body.addEventListener('click', function(event) {
+  if (event.target.getAttribute('class') === "not-editable"){
+    console.log('not-editable');
+  }
+})
 
 // Could just pass `buildRestaurantList` as the callback instead of creating a new function, e.g. `document.addEventListener('DOMContentLoaded', buildRestaurantList)`
 // The script tag in the page is also located after the HTML we depend on, so it's guaranteed to be parsed by the time this code runs, meaning we could also

@@ -63,7 +63,14 @@ app.post('/restaurants/add', async function(request, response) {
   });    
 });
 
-app.post('/restauants/delete', async function(){});
+app.post('/restauants/delete', async function(request, response) {
+  const deleteRestaurantName = request.body.name;
+  
+  db.run('DELETE FROM restaurants WHERE name = (?)', deleteRestaurantName, error => {
+    response.status(200).send(deleteRestaurantName + ' was deleted.')
+  }); 
+  
+});
 
 // listen for requests :)
 const listener = app.listen(process.env.PORT, function() {

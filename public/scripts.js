@@ -23,6 +23,8 @@ async function buildRestaurantList(){
   })  
 }
 
+async
+
 function setEditability(ul){
   ul.forEach(function(li){
     if (li.className == 'editable'){
@@ -77,10 +79,6 @@ document.querySelector('#delete-button').addEventListener('click', function() {
 });
 
 document.body.addEventListener('click', function(event) {
-  if (event.target.getAttribute('class') === "not-editable"){
-    console.log('not-editable');
-    console.log(event.target.textContent);
-  }
   if (event.target.getAttribute('class') === "editable"){
     console.log('editable');
     console.log(event.target.textContent);

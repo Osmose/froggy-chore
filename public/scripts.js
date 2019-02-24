@@ -33,19 +33,19 @@ function setEditability(ul){
   });
 };
 
-function changeEditMode(){
+function changeEditMode(shouldEdit){
   const button = document.querySelector('#delete-button');
    const editMode = button.getAttribute('edit-mode');
-   if (editMode === 'false'){
-     button.setAttribute('edit-mode', 'true');
-     button.textContent = 'Stop Deleting Restaurants';
-     setEditability(document.querySelector('#restaurant-list').childNodes);
-   }
-   else if (editMode === 'true'){
-     button.setAttribute('edit-mode', 'false');
-     button.textContent = 'Delete Restaurant(s)';
-     setEditability(document.querySelector('#restaurant-list').childNodes);
-   }
+     if ((editMode === 'false') && (shouldEdit === "true")){
+       button.setAttribute('edit-mode', 'true');
+       button.textContent = 'Stop Deleting Restaurants';
+       setEditability(document.querySelector('#restaurant-list').childNodes);
+     }
+     else if (editMode === 'true'){
+       button.setAttribute('edit-mode', 'false');
+       button.textContent = 'Delete Restaurant(s)';
+       setEditability(document.querySelector('#restaurant-list').childNodes);
+     }
 }
 
 document.querySelector('#choose-button').addEventListener('click', async function() {
@@ -71,14 +71,15 @@ document.querySelector('#new-restaurant').addEventListener('submit', async funct
   if (!response.ok) {
     window.alert(await response.text());
   } else {
+    buildRestaurantList();
+    changeEditMode("false");
     window.alert(`${newRestaurant.name} added!`);
   }
-  buildRestaurantList();
-  changeEditMode();
+  
 });
 
 document.querySelector('#delete-button').addEventListener('click', function() {
-   changeEditMode()
+   changeEditMode("true");
 });
 
 document.body.addEventListener('click', async function(event) {

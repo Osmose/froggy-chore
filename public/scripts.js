@@ -23,6 +23,11 @@ async function buildRestaurantList(){
   })  
 }
 
+function setNotEditable(){
+  const currentList = document.querySelector('#restaurant-list');
+  
+}
+
 document.querySelector('#choose-button').addEventListener('click', async function() {
   document.querySelector('#title').innerText = await randomRestaurantName();  
 });
@@ -57,21 +62,23 @@ document.querySelector('#delete-button').addEventListener('click', function() {
    if (editMode === 'false'){
      button.setAttribute('edit-mode', 'true');
      button.textContent = 'Stop Deleting Restaurants';
-     console.log(document.querySelector('#restaurant-list'));
+     console.log(document.querySelector('#restaurant-list').childNodes);
    }
    else if (editMode === 'true'){
      button.setAttribute('edit-mode', 'false');
      button.textContent = 'Delete Restaurant(s)';
-     console.log(document.querySelector('#restaurant-list'))
+     console.log(document.querySelector('#restaurant-list').childNodes);
    }
 });
 
 document.body.addEventListener('click', function(event) {
   if (event.target.getAttribute('class') === "not-editable"){
     console.log('not-editable');
+    console.log(event.target);
   }
   if (event.target.getAttribute('class') === "editable"){
     console.log('editable');
+    console.log(event.target);
   }
 })
 

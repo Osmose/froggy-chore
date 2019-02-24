@@ -16,12 +16,18 @@ db.serialize(function() {
   if (!exists) {
     db.run('CREATE TABLE restaurants (name VARCHAR(255))');
     
-    // insert default restaurant
+    // insert default restaurants
     db.serialize(function() {
       db.run('INSERT INTO restaurants (name) VALUES ("BK\'s Brewhouse"), ("Red Robin"), ("IHOP"), ("Old Spaghetti Factory")');
     });
   }
 });
+
+function requirePassword(request, response, next) {
+  
+}
+
+/**
 
 app.get('/', function(request, response) {
   response.sendFile(__dirname + '/views/index.html');
@@ -59,7 +65,7 @@ app.post('/restaurants/add', async function(request, response) {
   }
   
   db.run('INSERT INTO restaurants (name) VALUES (?)', newRestaurantName, error => {
-    response.status(200).send('ok!')
+    response.status(200).send('ok!');
   });    
 });
 
@@ -67,7 +73,7 @@ app.post('/restaurants/delete', async function(request, response) {
   const deleteRestaurantName = request.body.name;
   
   db.run('DELETE FROM restaurants WHERE name = (?)', deleteRestaurantName, error => {
-    response.status(200).send(deleteRestaurantName + ' was deleted.')
+    response.status(200).send(deleteRestaurantName + ' was deleted.');
   }); 
   
 });

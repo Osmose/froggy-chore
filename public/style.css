@@ -45,6 +45,9 @@ h1 {
   padding-left: 2px;
 }
 
+#restaurant-list li.selected {
+  background: cyan;
+}
 
 
 form {

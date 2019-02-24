@@ -1,9 +1,3 @@
-// async function randomRestaurantName() {
-//   const response = await fetch('/restaurants/random');
-//   const restaurant = await response.json();
-//   return restaurant.name;
-// }
-
 class API {
   constructor(password) {
     this.password = password
@@ -28,11 +22,7 @@ class API {
   async getRestaurants() {
     return this.fetch('/restaurants');
   }
-  
-  async getRandomRestaurant() {
-    return this.fetch('/restaurants/random');
-  }
-  
+    
   async addRestaurant(name) {
     return this.fetch('/restaurants/add', {
       headers: {
@@ -45,6 +35,16 @@ class API {
   }
 }
 
+async function wait(delay) {
+  return new Promise(resolve => {
+    window.setTimeout(resolve, delay);
+  });
+}
+
+function randomChoice(choices) {
+  return choices[Math.floor(Math.random() * choices.length)];
+}
+
 let api = new API();
 const dom = {
   chooseButton: document.querySelector('#choose-button'),
@@ -54,11 +54,20 @@ const dom = {
 // When the choose button is clicked, get a random restaurant from the server
 // and show a short animation before highlighting it.
 dom.chooseButton.addEventListener('click', async () => {
-  const restaurant = await api.getRandomRestaurant();
-  
   for (const li of dom.restaurantList.children) {
     li.classList.remove('selected'); 
   }
+  
+  let lastLi = null;
+  for (let k = 0; k < 16; k++) {
+    if (lastLi) {
+      lastLi.classList.remove('selected');
+    }
+    
+    randomChoice(dom.
+  }
+  
+  
   const restaurantLi = Array.from(dom.restaurantList.children).find(
     li => li.textContent === restaurant.name,
   );

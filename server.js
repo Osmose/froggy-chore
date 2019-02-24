@@ -58,16 +58,6 @@ app.get('/restaurants', function(request, response) {
 });
 
 /**
- * Randomly choose a restaurant from the saved list and return it
- */
-app.get('/restaurants/random', function(request, response) {
-  db.all('SELECT * FROM restaurants', (error, restaurants) => {
-    const index = Math.floor(Math.random() * restaurants.length);
-    response.send(restaurants[index]);
-  });
-});
-
-/**
  * Add a new restaurant to the saved list. Return a 409 if a restaurant with the given
  * name already exists.
  */

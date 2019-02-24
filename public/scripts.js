@@ -23,9 +23,15 @@ async function buildRestaurantList(){
   })  
 }
 
-function setNotEditable(){
-  const currentList = document.querySelector('#restaurant-list');
-  
+function setNotEditable(ul){
+  ul.forEach(function(li){
+    li.className = 'not-editable';
+  }) 
+}
+function setToEditable(ul){
+  ul.forEach(function(li){
+    li.className = 'editable';
+  }) 
 }
 
 document.querySelector('#choose-button').addEventListener('click', async function() {
@@ -62,23 +68,23 @@ document.querySelector('#delete-button').addEventListener('click', function() {
    if (editMode === 'false'){
      button.setAttribute('edit-mode', 'true');
      button.textContent = 'Stop Deleting Restaurants';
-     console.log(document.querySelector('#restaurant-list').childNodes);
+     setToEditable(document.querySelector('#restaurant-list').childNodes);
    }
    else if (editMode === 'true'){
      button.setAttribute('edit-mode', 'false');
      button.textContent = 'Delete Restaurant(s)';
-     console.log(document.querySelector('#restaurant-list').childNodes);
+     setNotEditable(document.querySelector('#restaurant-list').childNodes);
    }
 });
 
 document.body.addEventListener('click', function(event) {
   if (event.target.getAttribute('class') === "not-editable"){
     console.log('not-editable');
-    console.log(event.target);
+    console.log(event.target.textContent);
   }
   if (event.target.getAttribute('class') === "editable"){
     console.log('editable');
-    console.log(event.target);
+    console.log(event.target.textContent);
   }
 })
 

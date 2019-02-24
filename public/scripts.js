@@ -95,7 +95,7 @@ document.body.addEventListener('click', async function(event) {
     } else {
       window.alert(`${deleteRestaurant.name} deleted!`);
     }
-    buildRestaurantList();
+    event.target.remove();
   }
 });
 

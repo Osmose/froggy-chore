@@ -8,7 +8,7 @@
 
 body {
   font-family: "Benton Sans", "Helvetica Neue", helvetica, arial, sans-serif;
-  margin: 2em;
+  margin: 4em;
   background-image: linear-gradient(to bottom, #ff4ba1, #dd70d9, #a691fb, #64aaff, #2dbbf8);
   max-height: 100%;
 }
@@ -130,8 +130,24 @@ footer {
   border-top: 1px solid lightgrey;
 }
 
-@media only screen and (max-width: 600px) {
+@media only screen and (max-width: 700px) {
   span {
   max-width: 100%;
+  }
+  #restaurant-list {
+    max-width: 98%;
+    margin: auto;
+    float: none;
+    margin-bottom: 5px;
+  }
+  
+  iframe {
+    width: auto;
+    height: auto;
+    
+  }
+  
+  body {
+    margin: 4em;
   }
 }

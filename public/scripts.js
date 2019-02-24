@@ -17,8 +17,8 @@ async function buildRestaurantList(){
   ul.innerHTML = ""; 
   list.forEach(function(item){ // for (const item of list) is my preferred format but it's purely a preference
     const li = document.createElement("li");
-    li.textContent = item.name; // li.textContent = item.name should work here as well
-    li.className = 'not-editable'; // Alternatives would be: `li.className = 'not-editable'` or `li.classList.add('not-editable')`.
+    li.textContent = item.name; 
+    li.className = 'not-editable';
     ul.appendChild(li);
   })  
 }
@@ -57,10 +57,12 @@ document.querySelector('#delete-button').addEventListener('click', function() {
    if (editMode === 'false'){
      button.setAttribute('edit-mode', 'true');
      button.textContent = 'Stop Deleting Restaurants';
+     console.log(document.querySelector('#restaurant-list'));
    }
    else if (editMode === 'true'){
      button.setAttribute('edit-mode', 'false');
      button.textContent = 'Delete Restaurant(s)';
+     console.log(document.querySelector('#restaurant-list'))
    }
 });
 
@@ -68,11 +70,9 @@ document.body.addEventListener('click', function(event) {
   if (event.target.getAttribute('class') === "not-editable"){
     console.log('not-editable');
   }
+  if (event.target.getAttribute('class') === "editable"){
+    console.log('editable');
+  }
 })
 
-// Could just pass `buildRestaurantList` as the callback instead of creating a new function, e.g. `document.addEventListener('DOMContentLoaded', buildRestaurantList)`
-// The script tag in the page is also located after the HTML we depend on, so it's guaranteed to be parsed by the time this code runs, meaning we could also
-// just call buildRestaurantList directly
 buildRestaurantList();
-
-

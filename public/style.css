@@ -11,11 +11,13 @@ body {
 }
 
 h1 {
+  font-family: 'Press Start 2P', cursive;
   font-style: italic;
   color: #373fff;
 }
 
 h2 {
+  font-family: 'Press Start 2P', cursive;
   font-style: italic;
   color: #3c0166;
 }
@@ -90,11 +92,14 @@ button:active {
 }
 
 #restaurant-list .not-editable:hover {
-  background-color: #e3dce8;
+  background-color: lightgrey;
+  border: 1px solid grey;
+  box-shadow: 2px 2px teal;
 }
 
 #restaurant-list .editable:hover {
   background-color: red;
+  cursor: pointer;
 }
 
 footer {

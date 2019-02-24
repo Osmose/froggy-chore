@@ -71,11 +71,10 @@ document.querySelector('#new-restaurant').addEventListener('submit', async funct
   if (!response.ok) {
     window.alert(await response.text());
   } else {
-    buildRestaurantList();
-    changeEditMode("false");
     window.alert(`${newRestaurant.name} added!`);
   }
-  
+  buildRestaurantList();
+  changeEditMode("false");
 });
 
 document.querySelector('#delete-button').addEventListener('click', function() {

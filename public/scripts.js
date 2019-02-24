@@ -4,6 +4,26 @@
 //   return restaurant.name;
 // }
 
+class API {
+  constructor(password) {
+    this.password = password
+  }
+  
+  async fetch(path, options={}) {
+    const response = fetch(path, {
+      headers: {
+        'Authoriz
+        ...options.headers,
+      },
+      ...options,
+    });
+  }
+  
+  async getRestaurants() {
+    return this.fetch('/restaurants');
+  }
+}
+
 async function getRestaurants(){
   const response = await fetch('/restaurants');
   return response.json(); 
@@ -35,8 +55,9 @@ async function getRestaurants(){
 
 // On load, build the restaurant list
 (async function() {
+  const api = new API();
   const restaurantList = document.querySelector('#restaurant-list');
-  for (const restaurant of await getRestaurants()) {
+  for (const restaurant of await api.getRestaurants()) {
     const li = document.createElement('li');
     li.textContent = restaurant.name; 
     restaurantList.appendChild(li);

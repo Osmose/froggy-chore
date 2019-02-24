@@ -10,7 +10,7 @@ body {
   font-family: "Benton Sans", "Helvetica Neue", helvetica, arial, sans-serif;
   margin: 2em;
   background-image: linear-gradient(to bottom, #ff4ba1, #dd70d9, #a691fb, #64aaff, #2dbbf8);
-  
+  max-height: 100%;
 }
 
 h1 {
@@ -93,6 +93,7 @@ button:active {
   border-radius: 3px;
   padding: 20px;
   max-width: 90%;
+  min-width: 80%;
   border: 1px solid black;
   box-shadow: 2px 2px #3c0166;
   float: right;
@@ -120,6 +121,7 @@ button:active {
 }
 
 #restaurant-list .editable:active {
+  cursor: url("https://cdn.glitch.com/feedf0dd-fd55-47b7-aada-9fff116d7bc6%2F1f4a5.png?1550987005051"), auto;
 }
 
 footer {

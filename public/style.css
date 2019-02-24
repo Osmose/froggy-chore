@@ -116,7 +116,10 @@ button:active {
 
 #restaurant-list .editable:hover {
   background-color: red;
-  cursor: pointer;
+  cursor: url("https://cdn.glitch.com/feedf0dd-fd55-47b7-aada-9fff116d7bc6%2F1f9e8.png?1550986568767"),pointer;
+}
+
+#restaurant-list .editable:active {
 }
 
 footer {

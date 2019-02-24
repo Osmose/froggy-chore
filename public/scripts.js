@@ -58,7 +58,7 @@ document.querySelector('#new-restaurant').addEventListener('submit', async funct
   } else {
     window.alert(`${newRestaurant.name} added!`);
   }
-  await buildRestaurantList();
+  buildRestaurantList();
 });
 
 document.querySelector('#delete-button').addEventListener('click', function() {
@@ -87,9 +87,16 @@ document.body.addEventListener('click', async function(event) {
       headers: {
         'Content-Type': 'application/json',
       },
-      body:JSON.stringify(
-    })
+      body:JSON.stringify(deleteRestaurant),
+    });
+    
+    if (!response.ok) {
+      window.alert(await response.text());
+    } else {
+      window.alert(`${deleteRestaurant.name} deleted!`);
+    }
+    buildRestaurantList();
   }
-})
+});
 
 buildRestaurantList();

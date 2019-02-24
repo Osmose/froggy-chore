@@ -63,7 +63,7 @@ app.post('/restaurants/add', async function(request, response) {
   });    
 });
 
-app.post('/restauants/delete', async function(request, response) {
+app.post('/restaurants/delete', async function(request, response) {
   const deleteRestaurantName = request.body.name;
   
   db.run('DELETE FROM restaurants WHERE name = (?)', deleteRestaurantName, error => {

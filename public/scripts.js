@@ -58,27 +58,24 @@ dom.chooseButton.addEventListener('click', async () => {
     li.classList.remove('selected'); 
   }
   
-  let lastLi = null;
+  let lastListItem = null;
   for (let k = 0; k < 16; k++) {
-    if (lastLi) {
-      lastLi.classList.remove('selected');
+    if (lastListItem) {
+      lastListItem.classList.remove('selected');
     }
     
-    randomChoice(dom.
+    const listItem = randomChoice(dom.restaurantList.children);
+    listItem.classList.add('selected');
+    lastListItem = listItem;
+    await wait(100);
   }
-  
-  
-  const restaurantLi = Array.from(dom.restaurantList.children).find(
-    li => li.textContent === restaurant.name,
-  );
-  restaurantLi.classList.add('selected');
 });
 
 // On load, build the restaurant list
 (async function() {
   for (const restaurant of await api.getRestaurants()) {
-    const li = document.createElement('li');
-    li.textContent = restaurant.name; 
-    dom.restaurantList.appendChild(li);
+    const listItem = document.createElement('li');
+    listItem.textContent = restaurant.name; 
+    dom.restaurantList.appendChild(listItem);
   }
 })();

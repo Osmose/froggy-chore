@@ -3,8 +3,6 @@
 
 * {
   box-sizing: border-box;
-}
-.custom {
   cursor: url("https://cdn.glitch.com/feedf0dd-fd55-47b7-aada-9fff116d7bc6%2F1f984-1.png?1550984968395"), auto;
 }
 
@@ -55,7 +53,7 @@ input {
   border: 1px solid lightgrey;
   border-radius: 3px;
   font-size: 16px;
-  cursor: url("https://cdn.glitch.com/feedf0dd-fd55-47b7-aada-9fff116d7bc6%2F270f.png?1550985102760")16 16, auto;
+  cursor: url("https://cdn.glitch.com/feedf0dd-fd55-47b7-aada-9fff116d7bc6%2F270f.png?1550985807556")16 16, auto;
 }
 
 button {
@@ -64,7 +62,7 @@ button {
   background-color: lightgrey;
   border: 1px solid grey;
   box-shadow: 2px 2px teal;
-  cursor: pointer;
+  cursor: url("https://cdn.glitch.com/feedf0dd-fd55-47b7-aada-9fff116d7bc6%2F1f446-1.png?1550986135356"), auto;
 }
 
 span {

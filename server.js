@@ -16,7 +16,7 @@ db.serialize(function() {
   if (!exists) {
     db.run('CREATE TABLE restaurants (name VARCHAR(255))');
     
-    // insert default dreams
+    // insert default restaurant
     db.serialize(function() {
       db.run('INSERT INTO restaurants (name) VALUES ("BK\'s Brewhouse"), ("Red Robin"), ("IHOP"), ("Old Spaghetti Factory")');
     });

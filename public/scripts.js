@@ -23,10 +23,6 @@ async function buildRestaurantList(){
   })  
 }
 
-async function deleteRestaurantFromList(){
-  
-}
-
 function setEditability(ul){
   ul.forEach(function(li){
     if (li.className == 'editable'){
@@ -80,10 +76,19 @@ document.querySelector('#delete-button').addEventListener('click', function() {
    }
 });
 
-document.body.addEventListener('click', function(event) {
+document.body.addEventListener('click', async function(event) {
   if (event.target.getAttribute('class') === "editable"){
-    console.log('editable');
-    console.log(event.target.textContent);
+    const deleteRestaurant = {
+      name: event.target.textContent,
+    }
+    
+    const response = await fetch('/restaurants/delete',{
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body:JSON.stringify(
+    })
   }
 })
 

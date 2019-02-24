@@ -14,6 +14,7 @@ h1 {
   font-family: 'Press Start 2P', cursive;
   font-style: italic;
   color: #373fff;
+  margin-bottom: 5px;
 }
 
 h2 {
@@ -63,6 +64,7 @@ button {
 span {
   max-width: 45%;
   float: right;
+  margin-bottom: 10px;
 }
 button:hover {
   background-color: yellow;
@@ -70,6 +72,11 @@ button:hover {
 
 button:active {
   box-shadow: none;
+}
+
+#choose-button {
+  margin-bottom: 10px;
+  display: block;
 }
 
 #delete-button {

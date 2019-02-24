@@ -23,16 +23,15 @@ async function buildRestaurantList(){
   })  
 }
 
-function setNotEditable(ul){
+function setEditability(ul){
   ul.forEach(function(li){
-    li.className = 'not-editable';
-  }) 
-}
-function setToEditable(ul){
-  ul.forEach(function(li){
-    li.className = 'editable';
-  }) 
-}
+    if (li.className == 'editable'){
+      li.className = 'not-editable';
+    } else if (li.className == 'not-editable'){
+      li.className = 'editable';
+    }
+  });
+};
 
 document.querySelector('#choose-button').addEventListener('click', async function() {
   document.querySelector('#title').innerText = await randomRestaurantName();  
@@ -68,12 +67,12 @@ document.querySelector('#delete-button').addEventListener('click', function() {
    if (editMode === 'false'){
      button.setAttribute('edit-mode', 'true');
      button.textContent = 'Stop Deleting Restaurants';
-     setToEditable(document.querySelector('#restaurant-list').childNodes);
+     setEditability(document.querySelector('#restaurant-list').childNodes);
    }
    else if (editMode === 'true'){
      button.setAttribute('edit-mode', 'false');
      button.textContent = 'Delete Restaurant(s)';
-     setNotEditable(document.querySelector('#restaurant-list').childNodes);
+     setEditability(document.querySelector('#restaurant-list').childNodes);
    }
 });
 

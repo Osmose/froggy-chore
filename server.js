@@ -63,6 +63,8 @@ app.post('/restaurants/add', async function(request, response) {
   });    
 });
 
+app.post('/restauants/delete', async function(){});
+
 // listen for requests :)
 const listener = app.listen(process.env.PORT, function() {
   console.log('Your app is listening on port ' + listener.address().port);

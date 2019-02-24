@@ -20,7 +20,6 @@ h2 {
   font-family: 'Press Start 2P', cursive;
   font-style: italic;
   color: #3c0166;
-  float: right;
   margin: 2px;
 }
 
@@ -62,7 +61,8 @@ button {
 }
 
 span {
-  display: inline-block;
+  max-width: 45%;
+  float: right;
 }
 button:hover {
   background-color: yellow;
@@ -73,7 +73,6 @@ button:active {
 }
 
 #delete-button {
-  display: inline-block;
   float: right;
 }
 
@@ -82,12 +81,10 @@ button:active {
   background: #9714ef;
   border-radius: 3px;
   padding: 20px;
-  max-width: 30%;
+  max-width: 90%;
   border: 1px solid black;
   box-shadow: 2px 2px #3c0166;
   float: right;
-  display: inline-block;
-  clear: all;
 }
 
 #restaurant-list li {

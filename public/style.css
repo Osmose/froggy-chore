@@ -3,13 +3,17 @@
 
 * {
   box-sizing: border-box;
-  cursor: url(), auto;
+  cursor: url('https://cdn.glitch.com/feedf0dd-fd55-47b7-aada-9fff116d7bc6%2Fcool-cursor-png.png?1550982567370'), auto;
+}
+.custom {
+  cursor: url(https://cdn.glitch.com/feedf0dd-fd55-47b7-aada-9fff116d7bc6%2Fcool-cursor-png.png?1550982567370), auto;
 }
 
 body {
   font-family: "Benton Sans", "Helvetica Neue", helvetica, arial, sans-serif;
   margin: 2em;
   background-image: linear-gradient(to bottom, #ff4ba1, #dd70d9, #a691fb, #64aaff, #2dbbf8);
+  
 }
 
 h1 {

@@ -3,10 +3,9 @@
 
 * {
   box-sizing: border-box;
-  cursor: url('https://cdn.glitch.com/feedf0dd-fd55-47b7-aada-9fff116d7bc6%2Fcool-cursor-png.png?1550982567370'), auto;
 }
 .custom {
-  cursor: url(https://cdn.glitch.com/feedf0dd-fd55-47b7-aada-9fff116d7bc6%2Fcool-cursor-png.png?1550982567370), auto;
+  cursor: url("https://s3-us-west-2.amazonaws.com/s.cdpn.io/9632/happy.png"), auto;
 }
 
 body {

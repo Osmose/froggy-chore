@@ -12,37 +12,20 @@
     <link rel="stylesheet" href="/style.css">
   </head>
   <body>
+    <div class="container">
+      <h1>Where should we eat?</h1>
 
-    <h1 id="title">
-      Where should we eat?
-    </h1>
-    <div>
-      <button type="button" id="choose-button">tell me senpai</button>
+      <div>
+        <button type="button" id="choose-button">tell me senpai</button>
+      </div>
+
+      <ul id="restaurant-list"></ul>
+
+      <iframe src="https://giphy.com/embed/cfuL5gqFDreXxkWQ4o" width="480" height="480" frameBorder="0" class="giphy-embed" allowFullScreen></iframe>
     </div>
-    
-    <form id="new-restaurant">
-      <input type="text" placeholder="Restaurant Name" name="name">
-      <input type="password" placeholder="Password" name="password">
-      <button type="submit">Submit</button>
-    </form>
-    <span>
-      <h2>
-        Restaurant List:
-      </h2>      
-      <ul id="restaurant-list">
-      </ul>
-      <button id="delete-button" edit-mode="false">
-        Delete Restaurant(s)
-      </button>
-    </span>
-    <br>
-    <br>
-    <iframe src="https://giphy.com/embed/cfuL5gqFDreXxkWQ4o" width="480" height="480" frameBorder="0" class="giphy-embed" allowFullScreen></iframe>
     
     <script src="/scripts.js" defer></script>
 
-    <!-- include the Glitch button to show what the webpage is about and
-          to make it easier for folks to view source and remix -->
     <div class="glitchButton" style="position:fixed;top:20px;right:20px;"></div>
     <script src="https://button.glitch.me/button.js"></script>
   </body>

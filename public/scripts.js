@@ -23,7 +23,9 @@ async function buildRestaurantList(){
   })  
 }
 
-async
+async function deleteRestaurantFromList(){
+  
+}
 
 function setEditability(ul){
   ul.forEach(function(li){

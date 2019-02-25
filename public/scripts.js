@@ -151,6 +151,8 @@ dom.passwordForm.addEventListener('submit', async event => {
   }
 });
 
+// When a delete button is clicked, delete the associated restaurant on the
+// server and then remove it from the list
 dom.restaurantList.addEventListener('click', async event => {
   if (!event.target.matches('.restaurant-list-item .delete')) {
     return;

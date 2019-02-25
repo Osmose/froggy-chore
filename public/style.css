@@ -94,6 +94,14 @@ h1 {
   flex: 0 0 auto;
 }
 
+.restaurant-list-item button.delete {
+  display: none; 
+}
+
+.authenticated .restaurant-list-item button.delete {
+  display: inline;
+}
+
 .authenticated #password-form {
   display: none;
 }

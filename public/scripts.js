@@ -36,6 +36,15 @@ class API {
       }),
     });
   }
+  
+  async verifyPassword(password) {
+    const response = await fetch('/authenticate', {
+      headers: {
+        Authorization: password,
+      },
+    });
+    return response.ok;
+  }
 }
 
 /**
@@ -58,6 +67,7 @@ let api = new API();
 const dom = {
   choiceSound: document.querySelector('#choice-sound'),
   chooseButton: document.querySelector('#choose-button'),
+  passwordForm: document.querySelector('#password-form'),
   restaurantList: document.querySelector('#restaurant-list'),
 };
 
@@ -84,16 +94,19 @@ dom.chooseButton.addEventListener('click', async () => {
 });
 
 (async function() {
+  // If a password has been saved, hide the password form, otherwise set it as the API password
+  const password = localStorage.getItem('password');
+  if (password && await api.verifyPassword(password)) {
+    dom.passwordForm.style.display = 'none';
+    api = new API(password);
+  } else {
+    api = new API();
+  }
+  
   // Build the restaurant list
   for (const restaurant of await api.getRestaurants()) {
     const listItem = document.createElement('li');
     listItem.textContent = restaurant.name; 
     dom.restaurantList.appendChild(listItem);
   }
-  
-  // If a password has been saved, hide the password form, otherwise set it as the API password
-//   const password = localStorage.getItem('password');
-//   if (password && await api.verifyPassword(password)) {
-    
-//   }
 })();

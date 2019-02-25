@@ -119,7 +119,9 @@ h1 {
 }
 
 #cat {
+  height: 300px;
   opacity: 0.5;
   position: fixed;
   z-index: -1000;
+  width: 300px;
 }

@@ -1,29 +1,69 @@
+/**
+ * Helper class for managing the scrolling cat gif animation
+ */
 class CatAnimation {
   constructor(cat) {
     this.cat = cat;
     this.speed = 200;
+    this.speedX = this.speed;
+    this.speedY = this.speed;
     this.left = 0;
     this.top = 0;
-    this.width = cat.width;
-    this.height = cat.height;
+    this.width = 300; // Staticly set to match the CSS dimensions
+    this.height = 300;
     this.callback = this.callback.bind(this);
   }
   
-  callback(ms) {
-    console.log(ms);
-    this.left += (ms / 1000) * this.speed;
-    this.top += (ms / 1000) * this.speed;
-    console.log(`L: ${this.left}, T: ${this.top}`);
+  callback(time) {
+    const ms = time - this.lastTime;
+    
+    this.left += (ms / 1000) * this.speedX;
+    this.top += (ms / 1000) * this.speedY;
     this.updateCat();
+    
+    const {clientWidth, clientHeight} = document.documentElement;
+    
+    // Collision resets the position because sometimes the frame gets caught way past
+    // an edge, and constantly flipping the speed won't get it all the way out
+    
+    // Bottom collision
+    if (this.top + this.height > clientHeight) {
+      this.speedY = -this.speed;
+      this.top = clientHeight - this.height;
+    }
+    
+    // Top collision
+    if (this.top < 0) {
+      this.speedY = this.speed;
+      this.top = 0;
+    }
+    
+    // Right collision
+    if (this.left + this.width > clientWidth) {
+      this.speedX = -this.speed;
+      this.left = clientWidth - this.width;
+    }
+    
+    // Left collision
+    if (this.left < 0) {
+      this.speedX = this.speed;
+      this.left = 0;
+    }
+    
+    this.lastTime = time;
     requestAnimationFrame(this.callback);
   }
   
+  /**
+   * Update the DOM node to match the position
+   */
   updateCat() {
     this.cat.style.left = `${this.left}px`;
     this.cat.style.top = `${this.top}px`;
   }
   
   start() {
+    this.lastTime = performance.now();
     requestAnimationFrame(this.callback);
   }
 }

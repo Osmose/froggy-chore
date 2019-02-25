@@ -49,6 +49,10 @@ h1 {
   background: cyan;
 }
 
+#choice-sound {
+  display: none; 
+}
+
 
 form {
   margin-bottom: 25px;

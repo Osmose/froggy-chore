@@ -47,6 +47,7 @@ function randomChoice(choices) {
 
 let api = new API();
 const dom = {
+  choiceSound: document.querySelector('#choice-sound'),
   chooseButton: document.querySelector('#choose-button'),
   restaurantList: document.querySelector('#restaurant-list'),
 };
@@ -58,8 +59,10 @@ dom.chooseButton.addEventListener('click', async () => {
     li.classList.remove('selected'); 
   }
   
+  dom.choiceSound.play();
+  
   let lastListItem = null;
-  for (let k = 0; k < 16; k++) {
+  for (let k = 0; k < 20; k++) {
     if (lastListItem) {
       lastListItem.classList.remove('selected');
     }
@@ -67,7 +70,7 @@ dom.chooseButton.addEventListener('click', async () => {
     const listItem = randomChoice(dom.restaurantList.children);
     listItem.classList.add('selected');
     lastListItem = listItem;
-    await wait(100);
+    await wait(120);
   }
 });
 

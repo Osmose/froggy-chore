@@ -1,10 +1,13 @@
 /**
  * Helper class for managing the scrolling cat gif animation
+ *
+ * The main remaining optimization would be to use two simultaneous CSS animations
+ * instead of requestAnimationFrame, but I'm kinda tired today.
  */
 class CatAnimation {
   constructor(cat) {
     this.cat = cat;
-    this.speed = 200;
+    this.speed = 200; // pixels per second
     this.speedX = this.speed;
     this.speedY = this.speed;
     this.left = 0;
@@ -14,9 +17,13 @@ class CatAnimation {
     this.callback = this.callback.bind(this);
   }
   
+  /**
+   * Called by requestAnimationFrame to update the animation.
+   */
   callback(time) {
     const ms = time - this.lastTime;
-    
+  
+    // Move!
     this.left += (ms / 1000) * this.speedX;
     this.top += (ms / 1000) * this.speedY;
     this.updateCat();
@@ -55,7 +62,7 @@ class CatAnimation {
   }
   
   /**
-   * Update the DOM node to match the position
+   * Update the DOM node to match the position we're storing.
    */
   updateCat() {
     this.cat.style.left = `${this.left}px`;
@@ -274,6 +281,7 @@ dom.restaurantList.addEventListener('click', async event => {
     dom.restaurantList.appendChild(listItem);
   }
   
+  // Flex on the haters
   const catAnimation = new CatAnimation(dom.cat);
   catAnimation.start();
 })();

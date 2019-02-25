@@ -150,6 +150,7 @@ async function wait(delay) {
  * Pick a random item from a list
  */
 function randomChoice(choices) {
+  console.log(choices[Math.floor(Math.random() * choices.length)]);
   return choices[Math.floor(Math.random() * choices.length)];
 }
 

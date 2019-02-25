@@ -70,6 +70,7 @@ const dom = {
   chooseButton: document.querySelector('#choose-button'),
   passwordForm: document.querySelector('#password-form'),
   restaurantList: document.querySelector('#restaurant-list'),
+  restaurantListItemTemplate: document.querySelector('#restaurant-list-item'),
 };
 
 // When the choose button is clicked, get a random restaurant from the server
@@ -123,8 +124,9 @@ dom.passwordForm.addEventListener('submit', async event => {
   
   // Build the restaurant list
   for (const restaurant of await api.getRestaurants()) {
-    const listItem = document.createElement('li');
-    listItem.textContent = restaurant.name; 
+    const listItem = dom.restaurantListItemTemplate.cloneNode(true);
+    console.log(listItem);
+    listItem.querySelector('slot[name="name"]').replaceWith(restaurant.name);
     dom.restaurantList.appendChild(listItem);
   }
 })();

@@ -63,6 +63,32 @@ function randomChoice(choices) {
   return choices[Math.floor(Math.random() * choices.length)];
 }
 
+/**
+ * Take a <template> tag and create a new DOM node using it as a, well, template.
+ * While not quite their intended use, this helper assumes we use <slot> tags as
+ * placeholders for values to format the template with. For example, given the
+ * HTML:
+ *
+ *   <template id="example">
+ *     <span><slot name="somevalue"></slot></span>
+ *   </template>
+ *
+ * We can call this function:
+ *
+ *   renderTemplate(document.getElementById('example'), {somevalue: 'foobar'});
+ *
+ * Which will return a DOM node structured like this:
+ *
+ *   <span>foobar</span>
+ */
+function renderTemplate(templateNode, values) {
+  const renderedDom = document.importNode(templateNode.content, true);
+  for (const [key, value] of Object.entries(values)) {
+    renderedDom.querySelector(`slot[name="${key}"]`).replaceWith(value);
+  }
+  return renderedDom;
+}
+
 let api = new API();
 const dom = {
   body: document.body,
@@ -124,9 +150,9 @@ dom.passwordForm.addEventListener('submit', async event => {
   
   // Build the restaurant list
   for (const restaurant of await api.getRestaurants()) {
-    const listItem = dom.restaurantListItemTemplate.cloneNode(true);
-    console.log(listItem);
-    listItem.querySelector('slot[name="name"]').replaceWith(restaurant.name);
+    const listItem = renderTemplate(dom.restaurantListItemTemplate, {
+      name: restaurant.name,
+    });
     dom.restaurantList.appendChild(listItem);
   }
 })();

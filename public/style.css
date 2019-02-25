@@ -117,3 +117,9 @@ h1 {
 #choice-sound {
   display: none; 
 }
+
+#cat {
+  opacity: 0.5;
+  position: fixed;
+  z-index: -1000;
+}

@@ -1,3 +1,13 @@
+class Cat {
+  constructor(cat) {
+    this.cat = cat;
+  }
+  
+  start() {
+    
+  }
+}
+
 /**
  * Manage interaction with the backend API.
  */
@@ -105,6 +115,7 @@ function renderTemplate(templateNode, values) {
 let api = new API();
 const dom = {
   body: document.body,
+  cat: document.querySelector('#cat'),
   choiceSound: document.querySelector('#choice-sound'),
   chooseButton: document.querySelector('#choose-button'),
   newRestaurantForm: document.querySelector('#new-restaurant-form'),

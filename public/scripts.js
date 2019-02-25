@@ -1,3 +1,6 @@
+/**
+ * Manage interaction with the backend API.
+ */
 class API {
   constructor(password) {
     this.password = password
@@ -35,12 +38,18 @@ class API {
   }
 }
 
+/**
+ * Wait a given amount of milliseconds
+ */
 async function wait(delay) {
   return new Promise(resolve => {
     window.setTimeout(resolve, delay);
   });
 }
 
+/**
+ * Pick a random item from a list
+ */
 function randomChoice(choices) {
   return choices[Math.floor(Math.random() * choices.length)];
 }

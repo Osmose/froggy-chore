@@ -26,13 +26,18 @@ h1 {
   margin-bottom: 1em;
 }
 
-#restaurant-list {
-  list-style-type: none;
+.restaurant-list-container {
   background: #9714ef;
   border-radius: 3px;
   padding: 20px;
   border: 1px solid black;
   box-shadow: 2px 2px #3c0166;
+}
+
+#restaurant-list {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
 }
 
 #restaurant-list li {

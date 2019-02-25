@@ -49,6 +49,15 @@ app.get('/', function(request, response) {
 });
 
 /**
+ * Verify a password. This makes it super-easy to try and bruteforce the password,
+ * although without rate limiting or other measures that's still trivial to do on other
+ * password-protected views anyway. 
+ */
+app.get('/authenticate', requirePassword, function(request, response) {
+  response.send('ok');
+});
+
+/**
  * Return a list of saved restaurants
  */
 app.get('/restaurants', function(request, response) {

@@ -206,7 +206,7 @@ dom.chooseButton.addEventListener('click', async () => {
       lastListItem.classList.remove('selected');
     }
     
-    const listItem = randomChoice(dom.restaurantList.children);
+    const listItem = randomChoice(dom.restaurantList.querySelectorAll('.restaurant-list-item'));
     listItem.classList.add('selected');
     lastListItem = listItem;
     await wait(120);

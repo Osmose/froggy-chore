@@ -1,10 +1,30 @@
-class Cat {
+class CatAnimation {
   constructor(cat) {
     this.cat = cat;
+    this.speed = 200;
+    this.left = 0;
+    this.top = 0;
+    this.width = cat.width;
+    this.height = cat.height;
+    this.callback = this.callback.bind(this);
+  }
+  
+  callback(ms) {
+    console.log(ms);
+    this.left += (ms / 1000) * this.speed;
+    this.top += (ms / 1000) * this.speed;
+    console.log(`L: ${this.left}, T: ${this.top}`);
+    this.updateCat();
+    requestAnimationFrame(this.callback);
+  }
+  
+  updateCat() {
+    this.cat.style.left = `${this.left}px`;
+    this.cat.style.top = `${this.top}px`;
   }
   
   start() {
-    
+    requestAnimationFrame(this.callback);
   }
 }
 
@@ -213,4 +233,7 @@ dom.restaurantList.addEventListener('click', async event => {
     });
     dom.restaurantList.appendChild(listItem);
   }
+  
+  const catAnimation = new CatAnimation(dom.cat);
+  catAnimation.start();
 })();

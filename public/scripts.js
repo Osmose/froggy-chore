@@ -83,11 +83,17 @@ dom.chooseButton.addEventListener('click', async () => {
   }
 });
 
-// On load, build the restaurant list
 (async function() {
+  // Build the restaurant list
   for (const restaurant of await api.getRestaurants()) {
     const listItem = document.createElement('li');
     listItem.textContent = restaurant.name; 
     dom.restaurantList.appendChild(listItem);
   }
+  
+  // If a password has been saved, hide the password form, otherwise set it as the API password
+//   const password = localStorage.getItem('password');
+//   if (password && await api.verifyPassword(password)) {
+    
+//   }
 })();

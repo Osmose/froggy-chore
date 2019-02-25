@@ -78,6 +78,10 @@ h1 {
   background: cyan;
 }
 
+.authenticated #password-form {
+  display: none;
+}
+
 #choice-sound {
   display: none; 
 }

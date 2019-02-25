@@ -65,6 +65,7 @@ function randomChoice(choices) {
 
 let api = new API();
 const dom = {
+  body: document.body,
   choiceSound: document.querySelector('#choice-sound'),
   chooseButton: document.querySelector('#choose-button'),
   passwordForm: document.querySelector('#password-form'),
@@ -93,11 +94,28 @@ dom.chooseButton.addEventListener('click', async () => {
   }
 });
 
+// When the password form is submitted, verify the given password and save
+// it if it's valid.
+dom.passwordForm.addEventListener('submit', async event => {
+  event.preventDefault();
+  
+  const password = new FormData(dom.passwordForm).get('password');
+  if (await api.verifyPassword(password)) {
+    localStorage.setItem('password', password);
+    dom.body.classList.add('authenticated');
+    api = new API(password);
+    
+    window.alert('Password accepted and saved');
+  } else {
+    window.alert('Password rejected');
+  }
+});
+
 (async function() {
   // If a password has been saved, hide the password form, otherwise set it as the API password
   const password = localStorage.getItem('password');
   if (password && await api.verifyPassword(password)) {
-    dom.passwordForm.style.display = 'none';
+    dom.body.classList.add('authenticated');
     api = new API(password);
   } else {
     api = new API();

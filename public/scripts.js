@@ -157,21 +157,17 @@ dom.passwordForm.addEventListener('submit', async event => {
 dom.newRestaurantForm.addEventListener('submit', async event => {
   event.preventDefault();
   
-  const formData = new FormData(dom.newRestaurantForm);
-  const restaurant = {
-    name: formData.get('name'),
-  };
-  
-  await api.addRestaurantn
-  if (await api.verifyPassword(password)) {
-    localStorage.setItem('password', password);
-    dom.body.classList.add('authenticated');
-    api = new API(password);
-    
-    window.alert('Password accepted and saved');
-  } else {
-    window.alert('Password rejected');
+  const name = new FormData(dom.newRestaurantForm).get('name');
+  try {
+    await api.addRestaurant(name);
+  } catch (err) {
+    window.alert(`Failed to add restaurant: ${err}`);
+    return;
   }
+  
+  const listItem = renderTemplate(dom.restaurantListItemTemplate, {name});
+  dom.restaurantList.appendChild(listItem);
+  dom.newRestaurantForm.reset();
 });
 
 // When a delete button is clicked, delete the associated restaurant on the

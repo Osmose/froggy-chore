@@ -7,6 +7,31 @@ body {
   background-image: linear-gradient(to bottom, #ff4ba1, #dd70d9, #a691fb, #64aaff, #2dbbf8);
 }
 
+button {
+  font-size: 16px;
+  border-radius: 3px;
+  background-color: lightgrey;
+  border: 1px solid grey;
+  box-shadow: 2px 2px teal;
+  padding: 2px 6px;
+}
+
+button:hover {
+  background-color: yellow;
+}
+
+button:active {
+  box-shadow: none;
+}
+
+input {
+  border-radius: 3px;
+  font-size: 16px;
+  border: 1px solid grey;
+  box-shadow: 2px 2px black;
+  padding: 2px 6px;
+}
+
 .container {
   margin: 4em auto;
   max-width: 960px;
@@ -41,13 +66,12 @@ h1 {
 }
 
 #restaurant-list li {
-  margin-bottom: 5px;
   background: #e7c4ff;
   border-radius: 2px;
-  margin: 5px;
+  margin: 5px 0;
+  padding: 2px 6px;
   border: 1px solid black;
   box-shadow: 2px 2px #3c0166;
-  padding-left: 2px;
 }
 
 #restaurant-list li.selected {

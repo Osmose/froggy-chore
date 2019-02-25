@@ -54,7 +54,7 @@ app.get('/', function(request, response) {
  * password-protected views anyway. 
  */
 app.get('/authenticate', requirePassword, function(request, response) {
-  response.send('ok');
+  response.send({valid: true});
 });
 
 /**
@@ -80,12 +80,12 @@ app.post('/restaurants/add', requirePassword, async function(request, response) 
   });
   
   if (exists) {
-    response.status(409).send('Already exists');
+    response.status(409).send({reason: 'Already exists'});
     return;
   }
   
   db.run('INSERT INTO restaurants (name) VALUES (?)', newRestaurantName, error => {
-    response.status(200).send('ok!');
+    response.status(200).send({name: newRestaurantName});
   });    
 });
 
@@ -96,7 +96,7 @@ app.post('/restaurants/delete', requirePassword, async function(request, respons
   const deleteRestaurantName = request.body.name;
   
   db.run('DELETE FROM restaurants WHERE name = (?)', deleteRestaurantName, error => {
-    response.status(200).send(deleteRestaurantName + ' was deleted.');
+    response.status(200).send({name: deleteRestaurantName});
   }); 
 });
 

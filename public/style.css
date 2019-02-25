@@ -78,6 +78,15 @@ h1 {
   background: cyan;
 }
 
+.restaurant-list-item {
+   
+}
+
+.restaurant-list-item button {
+  float: right;
+  margin-left: 6px;
+}
+
 .authenticated #password-form {
   display: none;
 }

@@ -28,6 +28,19 @@ class API {
     
   async addRestaurant(name) {
     return this.fetch('/restaurants/add', {
+      method: 'post',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        name,
+      }),
+    });
+  }
+  
+  async deleteRestaurant(name) {
+    return this.fetch('/restaurants/delete', {
+      method: 'post',
       headers: {
         'Content-Type': 'application/json',
       },
@@ -136,6 +149,18 @@ dom.passwordForm.addEventListener('submit', async event => {
   } else {
     window.alert('Password rejected');
   }
+});
+
+dom.restaurantList.addEventListener('click', async event => {
+  if (!event.target.matches('.restaurant-list-item .delete')) {
+    return;
+  }
+  
+  event.stopPropagation();
+  const listItem = event.target.closest('.restaurant-list-item');
+  const name = listItem.querySelector('.name').textContent;
+  await api.deleteRestaurant(name);
+  listItem.remove();
 });
 
 (async function() {

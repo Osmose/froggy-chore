@@ -22,8 +22,11 @@
       <div class="restaurant-list-container">
         <ul id="restaurant-list">
           <template id="restaurant-list-item">
-            <li>
-              <slot name="name"></slot>
+            <li class="restaurant-list-item">
+              <button class="delete">
+                Delete
+              </button>
+              <span class="name"><slot name="name"></slot></span>
             </li>
           </template>
         </ul>

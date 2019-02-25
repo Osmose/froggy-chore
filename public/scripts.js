@@ -209,7 +209,6 @@ dom.chooseButton.addEventListener('click', async () => {
     const listItem = randomChoice(dom.restaurantList.children);
     listItem.classList.add('selected');
     lastListItem = listItem;
-    console.log(listItem.name)
     await wait(120);
   }
 });

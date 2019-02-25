@@ -107,6 +107,7 @@ const dom = {
   body: document.body,
   choiceSound: document.querySelector('#choice-sound'),
   chooseButton: document.querySelector('#choose-button'),
+  newRestaurantForm: document.querySelector('#new-restaurant-form'),
   passwordForm: document.querySelector('#password-form'),
   restaurantList: document.querySelector('#restaurant-list'),
   restaurantListItemTemplate: document.querySelector('#restaurant-list-item'),
@@ -151,8 +152,30 @@ dom.passwordForm.addEventListener('submit', async event => {
   }
 });
 
+// When the new restaurant form is submitted, save the restaurant and
+// add it to the list
+dom.newRestaurantForm.addEventListener('submit', async event => {
+  event.preventDefault();
+  
+  const formData = new FormData(dom.newRestaurantForm);
+  const restaurant = {
+    name: formData.get('name'),
+  };
+  
+  await api.addRestaurantn
+  if (await api.verifyPassword(password)) {
+    localStorage.setItem('password', password);
+    dom.body.classList.add('authenticated');
+    api = new API(password);
+    
+    window.alert('Password accepted and saved');
+  } else {
+    window.alert('Password rejected');
+  }
+});
+
 // When a delete button is clicked, delete the associated restaurant on the
-// server and then remove it from the list
+// server and then remove it from the list.
 dom.restaurantList.addEventListener('click', async event => {
   if (!event.target.matches('.restaurant-list-item .delete')) {
     return;
@@ -165,6 +188,7 @@ dom.restaurantList.addEventListener('click', async event => {
   listItem.remove();
 });
 
+// Kickoff! 
 (async function() {
   // If a password has been saved, hide the password form, otherwise set it as the API password
   const password = localStorage.getItem('password');

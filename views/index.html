@@ -16,8 +16,8 @@
       <ul id="chore-list">
         <template id="chore-list-item">
           <li>
-            <span className="name"><slot name="name"></slot></span>
-            <button className="delete" type="button">
+            <span class="name"><slot name="name"></slot></span>
+            <button class="delete" type="button">
               Delete
             </button>
           </li>
@@ -26,7 +26,7 @@
       
       <form id="new-chore-form">
         <input type="text" name="name" placeholder="Chore name">
-        <input type=""
+        <input type="number" name="delay" placeholder="Days until due again">
         <button type="submit">
           Add
         </button>

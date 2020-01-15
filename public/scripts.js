@@ -91,7 +91,8 @@ async function wait(delay) {
 function renderTemplate(templateNode, values) {
   const renderedDom = document.importNode(templateNode.content, true);
   for (const [key, value] of Object.entries(values)) {
-    renderedDom.querySelector(`slot[name="${key}"]`).replaceWith(value);
+    const domNode = renderedDom.querySelector(`slot[name="${key}"]`);
+    if (domNode).replaceWith(value);
   }
   return renderedDom;
 }

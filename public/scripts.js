@@ -92,7 +92,9 @@ function renderTemplate(templateNode, values) {
   const renderedDom = document.importNode(templateNode.content, true);
   for (const [key, value] of Object.entries(values)) {
     const domNode = renderedDom.querySelector(`slot[name="${key}"]`);
-    if (domNode).replaceWith(value);
+    if (domNode) {
+      domNode.replaceWith(value);
+    }
   }
   return renderedDom;
 }
@@ -103,7 +105,7 @@ const dom = {
   newChoreForm: document.querySelector('#new-chore-form'),
   passwordForm: document.querySelector('#password-form'),
   choreList: document.querySelector('#chore-list'),
-  choreListItemTemplate: document.querySelector('#chore-list-item'),
+  choreListItemTemplate: document.querySelector('#chore-list-item-template'),
 };
 
 // When the password form is submitted, verify the given password and save

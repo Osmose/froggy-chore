@@ -18,7 +18,7 @@ db.serialize(function() {
   // If the database file didn't exist before we set up the connection, we need to
   // create the initial tables and data.
   if (!exists) {
-    db.run('CREATE TABLE chores (name VARCHAR(255), delay INTEGER, lastDone INTEGER)');
+    db.run('CREATE TABLE chores (id INTEGER PRIMARY KEY, name VARCHAR(255) NOT NULL, delay INTEGER NOT NULL, lastDone INTEGER)');
   }
 });
 
@@ -55,23 +55,22 @@ app.get('/authenticate', requirePassword, function(request, response) {
 });
 
 /**
- * Return a list of saved restaurants
+ * Return a list of saved chores
  */
-app.get('/restaurants', function(request, response) {
-  db.all('SELECT * FROM restaurants', (error, restaurants) => {
-    response.send(restaurants);
+app.get('/chores', function(request, response) {
+  db.all('SELECT * FROM chores', (error, chores) => {
+    response.send(chores);
   });
 });
 
 /**
- * Add a new restaurant to the saved list. Return a 409 if a restaurant with the given
+ * Add a new chore to the saved list. Return a 409 if a chore with the given
  * name already exists.
  */
-app.post('/restaurants/add', requirePassword, async function(request, response) {
-   
-  const newRestaurantName = request.body.name;
+app.post('/chores/add', requirePassword, async function(request, response) {
+  const newChoreName = request.body.name;
   const exists = await new Promise(resolve => {
-    db.get('SELECT COUNT(*) FROM restaurants WHERE name = (?)', newRestaurantName, (error, row) => {
+    db.get('SELECT COUNT(*) FROM chores WHERE name = (?)', newChoreName, (error, row) => {
       resolve(row['COUNT(*)'] > 0);    
     });  
   });
@@ -81,19 +80,20 @@ app.post('/restaurants/add', requirePassword, async function(request, response) 
     return;
   }
   
-  db.run('INSERT INTO restaurants (name) VALUES (?)', newRestaurantName, error => {
-    response.status(200).send({name: newRestaurantName});
+  const newChoreDelay = request.body.delay;
+  db.run('INSERT INTO chores (name, delay) VALUES (?, ?)', newChoreName, newChoreDelay, error => {
+    response.status(200).send({name: newChoreName, delay: newChoreDelay});
   });    
 });
 
 /**
- * Delete a restaurant from the saved list
+ * Delete a chore from the saved list
  */
-app.post('/restaurants/delete', requirePassword, async function(request, response) {
-  const deleteRestaurantName = request.body.name;
+app.post('/chores/delete', requirePassword, async function(request, response) {
+  const deleteChoreId = request.body.id;
   
-  db.run('DELETE FROM restaurants WHERE name = (?)', deleteRestaurantName, error => {
-    response.status(200).send({name: deleteRestaurantName});
+  db.run('DELETE FROM chores WHERE id = (?)', deleteChoreId, error => {
+    response.status(200).send({id: deleteRestaurantName});
   }); 
 });
 

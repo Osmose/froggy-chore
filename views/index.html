@@ -1,58 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <title>What to Eat?</title>
-    <meta name="description" content="What to eat?">
+    <title>Froggy Chores</title>
+    <meta name="description" content="Chore tracker">
     <link id="favicon" rel="icon" href="https://glitch.com/edit/favicon-app.ico" type="image/x-icon">
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     
-    <link href="https://fonts.googleapis.com/css?family=Press+Start+2P" rel="stylesheet">
     <link rel="stylesheet" href="/style.css">
   </head>
   <body>
     <div class="container">
-      <h1>Where should we eat?</h1>
-
-      <div>
-        <button type="button" id="choose-button">tell me senpai</button>
-      </div>
-
-      <div class="restaurant-list-container">
-        <ul id="restaurant-list">
-          <template id="restaurant-list-item">
-            <li class="restaurant-list-item">
-              <span class="name"><slot name="name"></slot></span>
-              <button class="delete">
-                Delete
-              </button>
-            </li>
-          </template>
-        </ul>
-        
-        <form id="new-restaurant-form">
-          <input type="text" name="name" placeholder="Restaurant name">
-          <button type="submit">
-            Add
-          </button>
-        </form>
-        
-        <form id="password-form">
-          <input type="password" name="password" placeholder="Enter password to edit">
-          <button type="submit">
-            Save
-          </button>
-        </form>
-      </div>
-      
-    <iframe id="cat" src="https://giphy.com/embed/cfuL5gqFDreXxkWQ4o" align="middle" frameborder="0" class="giphy-embed"></iframe>
-    </div>
-    
+      <h1>Froggy Chores</h1>
+    </div>    
     <script src="/scripts.js" defer></script>
-    <audio src="https://cdn.glitch.com/feedf0dd-fd55-47b7-aada-9fff116d7bc6%2Fchoice.ogg?1551052737990" id="choice-sound"></audio>
-
-    <div class="glitchButton" style="position:fixed;top:20px;right:20px;"></div>
-    <script src="https://button.glitch.me/button.js"></script>
   </body>
 </html>

@@ -18,10 +18,7 @@ db.serialize(function() {
   // If the database file didn't exist before we set up the connection, we need to
   // create the initial tables and data.
   if (!exists) {
-    db.run('CREATE TABLE restaurants (name VARCHAR(255))');
-    db.serialize(function() {
-      db.run('INSERT INTO restaurants (name) VALUES ("BK\'s Brewhouse"), ("Red Robin"), ("IHOP"), ("Old Spaghetti Factory")');
-    });
+    db.run('CREATE TABLE chores (name VARCHAR(255), delay INTEGER, lastDone INTEGER)');
   }
 });
 

@@ -18,7 +18,7 @@ db.serialize(function() {
   // If the database file didn't exist before we set up the connection, we need to
   // create the initial tables and data.
   if (!exists) {
-    db.run('CREATE TABLE chores (id INTEGER PRIMARY KEY, name VARCHAR(255) NOT NULL, delay INTEGER NOT NULL, lastDone INTEGER)');
+    db.run('CREATE TABLE chores (name VARCHAR(255) PRIMARY KEY, delay INTEGER NOT NULL, lastDone INTEGER)');
   }
 });
 
@@ -67,7 +67,7 @@ app.get('/chores', function(request, response) {
  * Add a new chore to the saved list. Return a 409 if a chore with the given
  * name already exists.
  */
-app.post('/chores/add', requirePassword, async function(request, response) {
+app.put('/chores', requirePassword, async function(request, response) {
   const newChoreName = request.body.name;
   const exists = await new Promise(resolve => {
     db.get('SELECT COUNT(*) FROM chores WHERE name = (?)', newChoreName, (error, row) => {
@@ -89,11 +89,11 @@ app.post('/chores/add', requirePassword, async function(request, response) {
 /**
  * Delete a chore from the saved list
  */
-app.post('/chores/delete', requirePassword, async function(request, response) {
-  const deleteChoreId = request.body.id;
+app.delete('/chores', requirePassword, async function(request, response) {
+  const deleteChoreName = request.body.name;
   
-  db.run('DELETE FROM chores WHERE id = (?)', deleteChoreId, error => {
-    response.status(200).send({id: deleteRestaurantName});
+  db.run('DELETE FROM chores WHERE name = (?)', deleteChoreName, error => {
+    response.status(200).send({id: deleteChoreName});
   }); 
 });
 

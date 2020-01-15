@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <title>Froggy Chores</title>
+    <title>Froggy Chore</title>
     <meta name="description" content="Chore tracker">
     <link id="favicon" rel="icon" href="https://glitch.com/edit/favicon-app.ico" type="image/x-icon">
     <meta charset="utf-8">
@@ -13,6 +13,31 @@
   <body>
     <div class="container">
       <h1>Froggy Chores</h1>
+      <ul id="chore-list">
+        <template id="chore-list-item">
+          <li>
+            <span className="name"><slot name="name"></slot></span>
+            <button className="delete" type="button">
+              Delete
+            </button>
+          </li>
+        </template>
+      </ul>
+      
+      <form id="new-chore-form">
+        <input type="text" name="name" placeholder="Chore name">
+        <input type=""
+        <button type="submit">
+          Add
+        </button>
+      </form>
+
+      <form id="password-form">
+        <input type="password" name="password" placeholder="Enter password to edit">
+        <button type="submit">
+          Save
+        </button>
+      </form>
     </div>    
     <script src="/scripts.js" defer></script>
   </body>

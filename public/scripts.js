@@ -1,81 +1,4 @@
 /**
- * Helper class for managing the scrolling cat gif animation
- *
- * The main remaining optimization would be to use two simultaneous CSS animations
- * instead of requestAnimationFrame, but I'm kinda tired today.
- */
-class CatAnimation {
-  constructor(cat) {
-    this.cat = cat;
-    this.speed = 200; // pixels per second
-    this.speedX = this.speed;
-    this.speedY = this.speed;
-    this.left = 0;
-    this.top = 0;
-    this.width = 300; // Staticly set to match the CSS dimensions
-    this.height = 300;
-    this.callback = this.callback.bind(this);
-  }
-  
-  /**
-   * Called by requestAnimationFrame to update the animation.
-   */
-  callback(time) {
-    const ms = time - this.lastTime;
-  
-    // Move!
-    this.left += (ms / 1000) * this.speedX;
-    this.top += (ms / 1000) * this.speedY;
-    this.updateCat();
-    
-    const {clientWidth, clientHeight} = document.documentElement;
-    
-    // Collision resets the position because sometimes the frame gets caught way past
-    // an edge, and constantly flipping the speed won't get it all the way out
-    
-    // Bottom collision
-    if (this.top + this.height > clientHeight) {
-      this.speedY = -this.speed;
-      this.top = clientHeight - this.height;
-    }
-    
-    // Top collision
-    if (this.top < 0) {
-      this.speedY = this.speed;
-      this.top = 0;
-    }
-    
-    // Right collision
-    if (this.left + this.width > clientWidth) {
-      this.speedX = -this.speed;
-      this.left = clientWidth - this.width;
-    }
-    
-    // Left collision
-    if (this.left < 0) {
-      this.speedX = this.speed;
-      this.left = 0;
-    }
-    
-    this.lastTime = time;
-    requestAnimationFrame(this.callback);
-  }
-  
-  /**
-   * Update the DOM node to match the position we're storing.
-   */
-  updateCat() {
-    this.cat.style.left = `${this.left}px`;
-    this.cat.style.top = `${this.top}px`;
-  }
-  
-  start() {
-    this.lastTime = performance.now();
-    requestAnimationFrame(this.callback);
-  }
-}
-
-/**
  * Manage interaction with the backend API.
  */
 class API {
@@ -99,25 +22,26 @@ class API {
     return response.json();
   }
   
-  async getRestaurants() {
-    return this.fetch('/restaurants');
+  async getChores() {
+    return this.fetch('/chores');
   }
     
-  async addRestaurant(name) {
-    return this.fetch('/restaurants/add', {
-      method: 'post',
+  async addChore(name, delay) {
+    return this.fetch('/chores', {
+      method: 'put',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
         name,
+        delay,
       }),
     });
   }
   
-  async deleteRestaurant(name) {
-    return this.fetch('/restaurants/delete', {
-      method: 'post',
+  async deleteChore(name) {
+    return this.fetch('/chores', {
+      method: 'delete',
       headers: {
         'Content-Type': 'application/json',
       },
@@ -144,13 +68,6 @@ async function wait(delay) {
   return new Promise(resolve => {
     window.setTimeout(resolve, delay);
   });
-}
-
-/**
- * Pick a random item from a list
- */
-function randomChoice(choices) {
-  return choices[Math.floor(Math.random() * choices.length)];
 }
 
 /**
@@ -182,36 +99,11 @@ function renderTemplate(templateNode, values) {
 let api = new API();
 const dom = {
   body: document.body,
-  cat: document.querySelector('#cat'),
-  choiceSound: document.querySelector('#choice-sound'),
-  chooseButton: document.querySelector('#choose-button'),
-  newRestaurantForm: document.querySelector('#new-restaurant-form'),
+  newChoreForm: document.querySelector('#new-chore-form'),
   passwordForm: document.querySelector('#password-form'),
-  restaurantList: document.querySelector('#restaurant-list'),
-  restaurantListItemTemplate: document.querySelector('#restaurant-list-item'),
+  choreList: document.querySelector('#chore-list'),
+  choreListItemTemplate: document.querySelector('#chore-list-item'),
 };
-
-// When the choose button is clicked, get a random restaurant from the server
-// and show a short animation before highlighting it.
-dom.chooseButton.addEventListener('click', async () => {
-  for (const li of dom.restaurantList.children) {
-    li.classList.remove('selected'); 
-  }
-  
-  dom.choiceSound.play();
-  
-  let lastListItem = null;
-  for (let k = 0; k < 20; k++) {
-    if (lastListItem) {
-      lastListItem.classList.remove('selected');
-    }
-    
-    const listItem = randomChoice(dom.restaurantList.querySelectorAll('.restaurant-list-item'));
-    listItem.classList.add('selected');
-    lastListItem = listItem;
-    await wait(120);
-  }
-});
 
 // When the password form is submitted, verify the given password and save
 // it if it's valid.
@@ -230,35 +122,37 @@ dom.passwordForm.addEventListener('submit', async event => {
   }
 });
 
-// When the new restaurant form is submitted, save the restaurant and
+// When the new chore form is submitted, save the chore and
 // add it to the list
-dom.newRestaurantForm.addEventListener('submit', async event => {
+dom.newChoreForm.addEventListener('submit', async event => {
   event.preventDefault();
   
-  const name = new FormData(dom.newRestaurantForm).get('name');
+  const formData = new FormData(dom.newChoreForm);
+  const name = formData.get('name');
+  const delay = formData.get('delay')
   try {
-    await api.addRestaurant(name);
+    await api.addChore(name, delay);
   } catch (err) {
-    window.alert(`Failed to add restaurant: ${err}`);
+    window.alert(`Failed to add chore: ${err}`);
     return;
   }
   
-  const listItem = renderTemplate(dom.restaurantListItemTemplate, {name});
-  dom.restaurantList.appendChild(listItem);
-  dom.newRestaurantForm.reset();
+  const listItem = renderTemplate(dom.choreListItemTemplate, {name, delay});
+  dom.choreList.appendChild(listItem);
+  dom.newChoreForm.reset();
 });
 
-// When a delete button is clicked, delete the associated restaurant on the
+// When a delete button is clicked, delete the associated chore on the
 // server and then remove it from the list.
-dom.restaurantList.addEventListener('click', async event => {
-  if (!event.target.matches('.restaurant-list-item .delete')) {
+dom.choreList.addEventListener('click', async event => {
+  if (!event.target.matches('.chore-list-item .delete')) {
     return;
   }
   
   event.stopPropagation();
-  const listItem = event.target.closest('.restaurant-list-item');
+  const listItem = event.target.closest('.chore-list-item');
   const name = listItem.querySelector('.name').textContent;
-  await api.deleteRestaurant(name);
+  await api.deleteChore(name);
   listItem.remove();
 });
 
@@ -273,15 +167,12 @@ dom.restaurantList.addEventListener('click', async event => {
     api = new API();
   }
   
-  // Build the restaurant list
-  for (const restaurant of await api.getRestaurants()) {
-    const listItem = renderTemplate(dom.restaurantListItemTemplate, {
-      name: restaurant.name,
+  // Build the chore list
+  for (const chore of await api.getChores()) {
+    const listItem = renderTemplate(dom.choreListItemTemplate, {
+      name: chore.name,
+      delay: chore.delay,
     });
-    dom.restaurantList.appendChild(listItem);
+    dom.choreList.appendChild(listItem);
   }
-  
-  // Flex on the haters
-  const catAnimation = new CatAnimation(dom.cat);
-  catAnimation.start();
 })();

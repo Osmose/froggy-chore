@@ -1,63 +1,30 @@
 /**
  * Manage interaction with the backend API.
  */
-class API {
-  constructor(password) {
-    this.password = password
+class API {  
+  constructor() {
+    this.chores = [];
+    try {
+      this.chores = JSON.parse(localStorage.chores);
+    } catch (err) { }
   }
   
-  async fetch(path, options={}) {
-    const response = await fetch(path, {
-      ...options,
-      headers: {
-        Authorization: this.password,
-        ...options.headers,
-      },
-    });
-    
-    if (!response.ok) {
-      throw new Error(await response.text());
-    }
-    
-    return response.json();
+  saveChores() {
+    localStorage.chores = JSON.stringify(this.chores);
   }
   
   async getChores() {
-    return this.fetch('/chores');
+    return this.chores;
   }
     
   async addChore(name, delay) {
-    return this.fetch('/chores', {
-      method: 'put',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        name,
-        delay,
-      }),
-    });
+    this.chores.push({name, delay, lastDone: null});
+    this.saveChores();
   }
   
   async deleteChore(name) {
-    return this.fetch('/chores', {
-      method: 'delete',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        name,
-      }),
-    });
-  }
-  
-  async verifyPassword(password) {
-    const response = await fetch('/authenticate', {
-      headers: {
-        Authorization: password,
-      },
-    });
-    return response.ok;
+    this.chores = this.chores.filter(chore => chore.name !== name);
+    this.saveChores();
   }
 }
 
@@ -108,25 +75,7 @@ const dom = {
   choreListItemTemplate: document.querySelector('#chore-list-item-template'),
 };
 
-// When the password form is submitted, verify the given password and save
-// it if it's valid.
-dom.passwordForm.addEventListener('submit', async event => {
-  event.preventDefault();
-  
-  const password = new FormData(dom.passwordForm).get('password');
-  if (await api.verifyPassword(password)) {
-    localStorage.setItem('password', password);
-    dom.body.classList.add('authenticated');
-    api = new API(password);
-    
-    window.alert('Password accepted and saved');
-  } else {
-    window.alert('Password rejected');
-  }
-});
-
-// When the new chore form is submitted, save the chore and
-// add it to the list
+// When the new chore form is submitted, save the chore and add it to the list
 dom.newChoreForm.addEventListener('submit', async event => {
   event.preventDefault();
   
@@ -145,8 +94,7 @@ dom.newChoreForm.addEventListener('submit', async event => {
   dom.newChoreForm.reset();
 });
 
-// When a delete button is clicked, delete the associated chore on the
-// server and then remove it from the list.
+// When a delete button is clicked, delete the associated chore and then remove it from the list.
 dom.choreList.addEventListener('click', async event => {
   if (!event.target.matches('.chore-list-item .delete')) {
     return;
@@ -161,15 +109,6 @@ dom.choreList.addEventListener('click', async event => {
 
 // Kickoff! 
 (async function() {
-  // If a password has been saved, hide the password form, otherwise set it as the API password
-  const password = localStorage.getItem('password');
-  if (password && await api.verifyPassword(password)) {
-    dom.body.classList.add('authenticated');
-    api = new API(password);
-  } else {
-    api = new API();
-  }
-  
   // Build the chore list
   for (const chore of await api.getChores()) {
     const listItem = renderTemplate(dom.choreListItemTemplate, {

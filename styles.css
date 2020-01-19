@@ -18,3 +18,21 @@ body {
   margin: 4em auto;
   max-width: 960px;
 }
+
+.box-border {
+  border: 32px solid transparent;
+  border-image-source: url("https://cdn.glitch.com/59c2bae2-f034-4836-ac6d-553a16963ad6%2Ffroggy-border.png?v=1579410825669");
+  border-image-slice: 32;
+  border-image-repeat: round;
+  border-image-width: 32px;
+}
+
+.portrait {
+  width: 96px;
+  height: 96px;
+  object-fit: none;
+}
+
+.dialog {
+  
+}

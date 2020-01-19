@@ -30,17 +30,21 @@ class API {
   }
   
   async completeChore(name) {
+    let completedChore;
     this.chores = this.chores.map(chore => {
       if (chore.name !== name) {
         return chore;
       }
       
-      return {
+      completedChore = {
         ...chore,
         lastDone: new Date(),
       };
+      return completedChore;
     });
     this.saveChores();
+    
+    return completedChore;
   }
 }
 
@@ -85,15 +89,20 @@ function renderTemplate(templateNode, values) {
 function choreStatus(chore) {
   const now = new Date();
   const choreLastDone = new Date(chore.lastDone);
+  console.log(`LastDone: ${chore.lastDone}`);
+  console.log(`LastDoneDate: ${choreLastDone}`);
   
   const diff = now - choreLastDone;
+  console.log(`Diff: ${diff}`);
   const delayMs = chore.delay * 24 * 60 * 60 * 1000;
+  console.log(`DelayMS: ${delayMs}`);
   if (diff >= delayMs) {
     return 'Due today';
   } else {
-    const dayDiff = Math.floor(diff / 24 / 60 / 60 / 1000);
+    const dayDiff = Math.floor((delayMs - diff) / 24 / 60 / 60 / 1000);
+    console.log(`DayDiff: ${dayDiff}`);
     if (dayDiff < 1) {
-      return 'Due today';
+      return 'Due in less than a day';
     }
     
     return `Due in ${dayDiff} days`;
@@ -153,7 +162,13 @@ dom.choreList.addEventListener('click', async event => {
   event.stopPropagation();
   const listItem = event.target.closest('.chore-list-item');
   const name = listItem.querySelector('.name').textContent;
-  await api.completeChore(name);
+  const chore = await api.completeChore(name);
+
+  const newListItem = renderTemplate(dom.choreListItemTemplate, {
+    name: chore.name,
+    status: choreStatus(chore),
+  });
+  listItem.parentNode.replaceChild(newListItem, listItem);
 });
 
 // Kickoff! 

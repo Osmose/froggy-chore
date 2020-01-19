@@ -87,24 +87,15 @@ function renderTemplate(templateNode, values) {
 }
 
 function choreStatus(chore) {
-  const now = new Date();
+  const now = new Date(Date.now() + (1000 * 60 * 60 * 24 * 5));
   const choreLastDone = new Date(chore.lastDone);
-  console.log(`LastDone: ${chore.lastDone}`);
-  console.log(`LastDoneDate: ${choreLastDone}`);
   
   const diff = now - choreLastDone;
-  console.log(`Diff: ${diff}`);
   const delayMs = chore.delay * 24 * 60 * 60 * 1000;
-  console.log(`DelayMS: ${delayMs}`);
   if (diff >= delayMs) {
     return 'Due today';
   } else {
-    const dayDiff = Math.floor((delayMs - diff) / 24 / 60 / 60 / 1000);
-    console.log(`DayDiff: ${dayDiff}`);
-    if (dayDiff < 1) {
-      return 'Due in less than a day';
-    }
-    
+    const dayDiff = Math.ceil((delayMs - diff) / 24 / 60 / 60 / 1000);    
     return `Due in ${dayDiff} days`;
   }
 }

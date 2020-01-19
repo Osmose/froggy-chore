@@ -11,8 +11,10 @@
 }
 
 body {
+  background: #ffffa5;
+  color: #7d4900;
   font-family: "Slapface", "Benton Sans", "Helvetica Neue", helvetica, arial, sans-serif;
-  font-size: 18px;
+  font-size: 22px;
 }
 
 .container {
@@ -35,7 +37,6 @@ h1 {
   flex-direction: row;
   margin-bottom: 8px;
   line-height: 32px;
-  font-size: 18px;
 }
 
 .chore-list-item .name {
@@ -99,7 +100,7 @@ input[type="number"] {
 
 .box-border {
   border: 32px solid transparent;
-  border-image-source: url("https://cdn.glitch.com/59c2bae2-f034-4836-ac6d-553a16963ad6%2Ffroggy-border.png?v=1579410825669");
+  border-image-source: url("https://cdn.glitch.com/59c2bae2-f034-4836-ac6d-553a16963ad6%2Ffroggy-border.png?v=1579422280072");
   border-image-slice: 32;
   border-image-repeat: round;
   border-image-width: 32px;
@@ -124,4 +125,15 @@ input[type="number"] {
 #chore-list,
 form {
   margin: 0 16px;
+}
+
+#new-chore-form {
+  display: flex;
+  flex-direction: row;
+  margin-top: 32px;
+}
+
+#new-chore-form input {
+  flex: 1;
+  margin-right: 8px;
 }

@@ -1,19 +1,23 @@
 const ADD_CHORE_QUOTES = [
   'A small price to pay for Froggy Chore',
   'KERO KERO',
-  'That\'s all I have for you today. If you do have any questions, '
+  'You’re gonna do great!',
+  'Good luck!',
 ];
 
 const DO_CHORE_QUOTES = [
   'Awwwwwwwwwww yeahhhhhhhhhh',
-  'Nice job',
+  'Nice job!',
   'お疲れ様です',
+  'Job’s done.',
+  '!!!',
 ];
 
 const REMOVE_CHORE_QUOTES = [
   'Later gator',
   'Who even cared about that chore anyway, jeez',
-  'YEET'
+  'YEET',
+  'Get outta here',
 ];
 
 class API {  

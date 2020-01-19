@@ -66,6 +66,19 @@ function renderTemplate(templateNode, values) {
   return renderedDom;
 }
 
+function choreStatus(chore) {
+  const now = new Date();
+  const choreLastDone = new Date(chore.lastDone);
+  
+  const diff = now - choreLastDone;
+  const delayMs = 
+  if (now < choreLastDone) {
+    return 'Due now';
+  } else {
+    return `$`
+  }
+}
+
 let api = new API();
 const dom = {
   body: document.body,

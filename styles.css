@@ -44,7 +44,7 @@ h1 {
 }
 
 .chore-list-item .status {
-  flex: 0 0 auto;
+  flex: 1;
   margin-left: 8px;
 }
 
@@ -95,7 +95,7 @@ input[type="number"] {
   border-radius: 6px;
   font-size: inherit;
   font-family: inherit;
-  padding: 4px;
+  padding: 4px 8px;
 }
 
 .box-border {
@@ -131,9 +131,14 @@ form {
   display: flex;
   flex-direction: row;
   margin-top: 32px;
+  flex-wrap: wrap;
 }
 
 #new-chore-form input {
   flex: 1;
   margin-right: 8px;
+}
+
+#frog-say {
+  margin: 8px 4px;
 }

@@ -18,12 +18,28 @@ class API {
   }
     
   async addChore(name, delay) {
-    this.chores.push({name, delay, lastDone: null});
+    const chore = {name, delay, lastDone: null};
+    this.chores.push(chore);
     this.saveChores();
+    return chore;
   }
   
   async deleteChore(name) {
     this.chores = this.chores.filter(chore => chore.name !== name);
+    this.saveChores();
+  }
+  
+  async completeChore(name) {
+    this.chores = this.chores.map(chore => {
+      if (chore.name !== name) {
+        return chore;
+      }
+      
+      return {
+        ...chore,
+        last
+      }
+    });
     this.saveChores();
   }
 }
@@ -71,11 +87,16 @@ function choreStatus(chore) {
   const choreLastDone = new Date(chore.lastDone);
   
   const diff = now - choreLastDone;
-  const delayMs = 
-  if (now < choreLastDone) {
-    return 'Due now';
+  const delayMs = chore.delay * 24 * 60 * 60 * 1000;
+  if (diff >= delayMs) {
+    return 'Due today';
   } else {
-    return `$`
+    const dayDiff = Math.floor(diff / 24 / 60 / 60 / 1000);
+    if (dayDiff < 1) {
+      return 'Due today';
+    }
+    
+    return `Due in ${dayDiff} days`;
   }
 }
 
@@ -95,14 +116,18 @@ dom.newChoreForm.addEventListener('submit', async event => {
   const formData = new FormData(dom.newChoreForm);
   const name = formData.get('name');
   const delay = formData.get('delay')
+  let chore;
   try {
-    await api.addChore(name, delay);
+    chore = await api.addChore(name, delay);
   } catch (err) {
     window.alert(`Failed to add chore: ${err}`);
     return;
   }
   
-  const listItem = renderTemplate(dom.choreListItemTemplate, {name, delay});
+  const listItem = renderTemplate(dom.choreListItemTemplate, {
+    name: chore.name,
+    status: choreStatus(chore),
+  });
   dom.choreList.appendChild(listItem);
   dom.newChoreForm.reset();
 });
@@ -120,13 +145,24 @@ dom.choreList.addEventListener('click', async event => {
   listItem.remove();
 });
 
+dom.choreList.addEventListener('click', async event => {
+  if (!event.target.matches('.chore-list-item .complete')) {
+    return;
+  }
+  
+  event.stopPropagation();
+  const listItem = event.target.closest('.chore-list-item');
+  const name = listItem.querySelector('.name').textContent;
+  await api.completeChore(name);
+});
+
 // Kickoff! 
 (async function() {
   // Build the chore list
   for (const chore of await api.getChores()) {
     const listItem = renderTemplate(dom.choreListItemTemplate, {
       name: chore.name,
-      delay: chore.delay,
+      status: choreStatus(chore),
     });
     dom.choreList.appendChild(listItem);
   }

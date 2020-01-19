@@ -37,8 +37,8 @@ class API {
       
       return {
         ...chore,
-        last
-      }
+        lastDone: new Date(),
+      };
     });
     this.saveChores();
   }

@@ -1,9 +1,17 @@
+@font-face {
+    font-family: 'Slapface';
+    src: url('https://cdn.glitch.com/59c2bae2-f034-4836-ac6d-553a16963ad6%2Fslapface-webfont.woff2?v=1579410305700') format('woff2'),
+         url('https://cdn.glitch.com/59c2bae2-f034-4836-ac6d-553a16963ad6%2Fslapface-webfont.woff?v=1579410305725') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
 * {
   box-sizing: border-box;
 }
 
 body {
-  font-family: "Benton Sans", "Helvetica Neue", helvetica, arial, sans-serif;
+  font-family: "Slapface", "Benton Sans", "Helvetica Neue", helvetica, arial, sans-serif;
 }
 
 .container {

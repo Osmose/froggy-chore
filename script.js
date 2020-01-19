@@ -1,6 +1,17 @@
-/**
- * Manage interaction with the backend API.
- */
+const ADD_CHORE_QUOTES = [
+  'A small price to pay for Froggy Chore',
+  'KERO KERO',
+  
+];
+
+const DO_CHORE_QUOTES = [
+  'Awwwwwwwwwww yeahhhhhhhhhh',
+];
+
+const REMOVE_CHORE_QUOTES = [
+  'Later gator',
+];
+
 class API {  
   constructor() {
     this.chores = [];
@@ -86,6 +97,10 @@ function renderTemplate(templateNode, values) {
   return renderedDom;
 }
 
+function randomChoice(list) {
+  return list[Math.floor(Math.random() * list.length)];
+}
+
 function choreStatus(chore) {
   const now = new Date();
   const choreLastDone = new Date(chore.lastDone);
@@ -107,7 +122,12 @@ const dom = {
   passwordForm: document.querySelector('#password-form'),
   choreList: document.querySelector('#chore-list'),
   choreListItemTemplate: document.querySelector('#chore-list-item-template'),
+  frogSay: document.querySelector('#frog-say'),
 };
+
+function frogSay(text) {
+  dom.frogSay.textContent = text;
+}
 
 // When the new chore form is submitted, save the chore and add it to the list
 dom.newChoreForm.addEventListener('submit', async event => {
@@ -130,6 +150,8 @@ dom.newChoreForm.addEventListener('submit', async event => {
   });
   dom.choreList.appendChild(listItem);
   dom.newChoreForm.reset();
+  
+  frogSay(randomChoice(ADD_CHORE_QUOTES));
 });
 
 // When a delete button is clicked, delete the associated chore and then remove it from the list.
@@ -143,6 +165,8 @@ dom.choreList.addEventListener('click', async event => {
   const name = listItem.querySelector('.name').textContent;
   await api.deleteChore(name);
   listItem.remove();
+  
+  frogSay(randomChoice(REMOVE_CHORE_QUOTES));
 });
 
 dom.choreList.addEventListener('click', async event => {
@@ -160,6 +184,8 @@ dom.choreList.addEventListener('click', async event => {
     status: choreStatus(chore),
   });
   listItem.parentNode.replaceChild(newListItem, listItem);
+  
+  frogSay(randomChoice(DO_CHORE_QUOTES));
 });
 
 // Kickoff! 

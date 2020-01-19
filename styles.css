@@ -112,11 +112,16 @@ input[type="number"] {
 
 .portrait {
   flex: 0 0 auto;
-  margin-right: 32px;
+  margin-right: 16px;
 }
 
 .dialog-box::after {
   content: "";
   display: table;
   clear: both;
+}
+
+#chore-list,
+form {
+  margin: 0 16px;
 }

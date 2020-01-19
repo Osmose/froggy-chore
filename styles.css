@@ -19,6 +19,52 @@ body {
   max-width: 960px;
 }
 
+h1 {
+  font-size: 56px;
+  text-align: center;
+}
+
+#chore-list {
+  list-style-type: none;
+  padding-left: 0;
+}
+
+.chore-list-item {
+  display: flex;
+  flex-direction: row;
+  margin-bottom: 8px;
+  line-height: 32px;
+  font-size: 18px;
+}
+
+.chore-list-item .name {
+  flex: 1;
+}
+
+.chore-list-item .status {
+  flex: 0 0 auto;
+  margin-left: 8px;
+}
+
+.chore-list-item button {
+  flex: 0 0 auto;
+  margin-left: 8px;
+  font-family: "Slapface", "Benton Sans", "Helvetica Neue", helvetica, arial, sans-serif;
+  font-size: inherit;
+}
+
+button.complete {
+  color: #008300;
+  border: 2px solid #008300;
+  background: #7bff30;
+}
+
+button.delete {
+  color: #008300;
+  border: 2px solid #008300;
+  background: #7bff30;
+}
+
 .box-border {
   border: 32px solid transparent;
   border-image-source: url("https://cdn.glitch.com/59c2bae2-f034-4836-ac6d-553a16963ad6%2Ffroggy-border.png?v=1579410825669");
@@ -28,11 +74,12 @@ body {
 }
 
 .portrait {
-  width: 96px;
-  height: 96px;
-  object-fit: none;
+  float: left;
+  margin-right: 32px;
 }
 
-.dialog {
-  
+.dialog-box::after {
+  content: "";
+  display: table;
+  clear: both;
 }

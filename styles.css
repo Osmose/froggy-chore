@@ -12,6 +12,7 @@
 
 body {
   font-family: "Slapface", "Benton Sans", "Helvetica Neue", helvetica, arial, sans-serif;
+  font-size: 18px;
 }
 
 .container {
@@ -49,20 +50,51 @@ h1 {
 .chore-list-item button {
   flex: 0 0 auto;
   margin-left: 8px;
-  font-family: "Slapface", "Benton Sans", "Helvetica Neue", helvetica, arial, sans-serif;
-  font-size: inherit;
 }
 
-button.complete {
+button.complete,
+button.add {
   color: #008300;
-  border: 2px solid #008300;
+  border-color: #008300;
   background: #7bff30;
+}
+
+button.complete:active,
+button.add:active {
+  color: #7bff30;
+  border-color: #7bff30;
+  background: #008300;
 }
 
 button.delete {
-  color: #008300;
-  border: 2px solid #008300;
-  background: #7bff30;
+  color: #833100;
+  border-color: #833100;
+  background: #ff4200;
+}
+
+button.delete:active {
+  color: #ff4200;
+  border-color: #ff4200;
+  background: #833100;
+}
+
+button {
+  font-family: inherit;
+  font-size: inherit;
+  border-width: 3px;
+  border-style: solid;
+  border-radius: 6px;
+  padding: 2px 4px;
+  cursor: pointer;
+}
+
+input[type="text"],
+input[type="number"] {
+  border: 3px solid #000;
+  border-radius: 6px;
+  font-size: inherit;
+  font-family: inherit;
+  padding: 4px;
 }
 
 .box-border {
@@ -73,8 +105,13 @@ button.delete {
   border-image-width: 32px;
 }
 
+.dialog-box {
+  display: flex;
+  flex-direction: row;
+}
+
 .portrait {
-  float: left;
+  flex: 0 0 auto;
   margin-right: 32px;
 }
 

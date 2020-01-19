@@ -87,7 +87,7 @@ function renderTemplate(templateNode, values) {
 }
 
 function choreStatus(chore) {
-  const now = new Date(Date.now() + (1000 * 60 * 60 * 24 * 5));
+  const now = new Date();
   const choreLastDone = new Date(chore.lastDone);
   
   const diff = now - choreLastDone;

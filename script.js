@@ -1,7 +1,6 @@
 const ADD_CHORE_QUOTES = [
   'A small price to pay for Froggy Chore',
   'KERO KERO',
-  
 ];
 
 const DO_CHORE_QUOTES = [

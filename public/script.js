@@ -200,16 +200,18 @@ const ChoreContext = createContext({});
 function makeChores() {
   const [chores, setChores] = useState(undefined);
   const [listId, setListId] = useState(undefined);
+  const [created, setCreated] = useState(false);
 
   return {
     chores,
+    created,
     
     async load(listId) {
       try {
         setChores(await api.getList(listId));
         setListId(listId);
+        setCreated(false);
       } catch (err) {
-        console.log(err);
         if (err.status === 404) {
           setChores(null)
           setListId(null);
@@ -223,6 +225,7 @@ function makeChores() {
       await api.postList(listId, chores);
       setChores([]);
       setListId(listId);
+      setCreated(true);
       history.pushState(null, '', `?listId=${listId}`);
     },
 
@@ -302,7 +305,7 @@ function AddChoreForm({ setQuote }) {
 
   async function handleSubmit(event) {
     event.preventDefault();
-    
+
     await add(name, delay);
     setName('');
     setDelay('');
@@ -334,9 +337,13 @@ function AddChoreForm({ setQuote }) {
 }
 
 function ListView() {
-  const { chores, complete, remove } = useChores();
+  const { chores, complete, remove, created } = useChores();
   const [quote, setQuote] = useState(html`
-    I can help you remember when to do your chores! 
+    ${created ? html`
+      Bookmark this page! If you lose the URL you won't be able to get back to it! Anyone with the URL can view and edit it.
+    ` : html`
+      I can help you remember when to do your chores! 
+    `}
     <br /><br />
     Fill out the fields and click add to add a chore. 
     Click DONE when you've performed the chore and I'll tell you how long until it's due again. 

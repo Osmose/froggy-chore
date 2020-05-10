@@ -33,12 +33,10 @@ app.get("/", (request, response) => {
 // GET /api/list/:listId
 app.get("/api/list/:listId", (request, response) => {
   const listId = request.params.listId;
-  console.log(listId);
   db.get(
     "SELECT * FROM lists WHERE listId = $listId",
     { $listId: listId },
     (err, list) => {
-      console.log(list);
       if (err) {
         console.error(err);
         response.sendStatus(500);

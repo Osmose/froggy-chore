@@ -8,7 +8,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(express.static("public"));
 
-// init sqlite db
+// Initialize the database.
 const dbFile = "./.data/sqlite.db";
 const exists = fs.existsSync(dbFile);
 const db = new sqlite3.Database(dbFile);
@@ -17,7 +17,7 @@ const db = new sqlite3.Database(dbFile);
 db.serialize(() => {
   if (!exists) {
     db.run(
-      "CREATE TABLE lists (id INTEGER PRIMARY KEY AUTOINCREMENT, json TEXT)"
+      "CREATE TABLE lists (id INTEGER PRIMARY KEY AUTOINCREMENT, listId VARCHAR(255) NOT NULL UNIQUE, json TEXT NOT NULL)"
     );
     console.log("New table lists created!");
   } else {
@@ -25,6 +25,7 @@ db.serialize(() => {
   }
 });
 
+// GET /
 app.get("/", (request, response) => {
   response.sendFile(`${__dirname}/views/index.html`);
 });
@@ -32,8 +33,8 @@ app.get("/", (request, response) => {
 // GET /api/list/:listId
 app.get("/api/list/:listId", (request, response) => {
   db.get(
-    "SELECT * FROM lists WHERE id = $id",
-    { $id: request.params.listId },
+    "SELECT * FROM lists WHERE listId = $listId",
+    { $listId: request.params.listId },
     (err, list) => {
       if (err) {
         response.send(list.json);
@@ -47,7 +48,7 @@ app.get("/api/list/:listId", (request, response) => {
 // POST /api/list/:listId
 app.post("/api/list/:listId", (request, response) => {
   db.run(
-    `INSERT INTO lists (id, json) VALUES ($id, $json) ON CONFLICT(id) UPDATE SET json = $json`,
+    `INSERT INTO lists (listId, json) VALUES ($listId, $json) ON CONFLICT(listId) UPDATE SET json = $json`,
     { $id: request.params.listId, $json: request.body.json },
     (request, error) => {
       if (error) {

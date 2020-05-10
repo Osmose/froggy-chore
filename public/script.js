@@ -276,13 +276,17 @@ function DialogBox({ children }) {
 }
 
 function Welcome() {
+  function handleClickCreate() {
+    
+  }
+
   return html`
+    <button class="create-list" onClick=${handleClickCreate}>Create chore list</button>
     <${DialogBox}>
       I can help you remember when to do your chores!
       <br /><br />
-      Click the button below to create a chore list.
+      Click the button above to create a new list of chores.
     <//>
-    <button class="add">Create chore list</button>
   `;
 }
 

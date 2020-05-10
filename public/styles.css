@@ -54,14 +54,16 @@ h1 {
 }
 
 button.complete,
-button.add {
+button.add,
+button.create-list {
   color: #008300;
   border-color: #008300;
   background: #7bff30;
 }
 
 button.complete:active,
-button.add:active {
+button.add:active,
+button.create-list:active {
   color: #7bff30;
   border-color: #7bff30;
   background: #008300;
@@ -77,6 +79,11 @@ button.delete:active {
   color: #ff4200;
   border-color: #ff4200;
   background: #833100;
+}
+
+button.create-list {
+  margin: 35px auto;
+  display: block;
 }
 
 button {

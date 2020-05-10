@@ -241,27 +241,98 @@ const api = {
 
 const ChoreContext = createContext({});
 
-function makeChores(listId) {
+function makeChores() {
   const [chores, setChores] = useState(undefined);
-  
+  const [listId, setListId] = useState(undefined);
+
   return {
     chores,
     
-    load(listId) {
+    async load(listId) {
       try {
         setChores(await api.get(listId));
+        setListId(listId);
       } catch (err) {
         if (err.statusCode === 404) {
           setChores(null)
+          setListId(null);
         }
       }
     },
 
-    async createList() {
+    async create() {
       const listId = uuidv4();
-      const json = JSON.stringify([])
-    }
+      const json = JSON.stringify([]);
+      await api.postList(listId, json);
+      setChores([]);
+      setListId(listId);
+    },
+
+    async add(name, delay) {
+      const chore = {name, delay, lastDone: null};
+      
+      // I know, I'm risking a race condition here but I'm not getting paid for this
+      const newChores = [...chores, chore];
+      await api.postList(listId, JSON.stringify(newChores));
+      setChores(newChores);
+    },
+
+    async delete(name) {
+      const chore = {name, delay, lastDone: null};
+      
+      // I know, I'm risking a race condition here but I'm not getting paid for this
+      const newChores = [...chores, chore];
+      await api.postList(listId, JSON.stringify(newChores));
+      setChores(newChores);
+    },
   };
+}
+
+class API {  
+  constructor() {
+    this.chores = [];
+    try {
+      this.chores = JSON.parse(localStorage.chores);
+    } catch (err) { }
+  }
+  
+  saveChores() {
+    localStorage.chores = JSON.stringify(this.chores);
+  }
+  
+  async getChores() {
+    return this.chores;
+  }
+    
+  async addChore(name, delay) {
+    const chore = {name, delay, lastDone: null};
+    this.chores.push(chore);
+    this.saveChores();
+    return chore;
+  }
+  
+  async deleteChore(name) {
+    this.chores = this.chores.filter(chore => chore.name !== name);
+    this.saveChores();
+  }
+  
+  async completeChore(name) {
+    let completedChore;
+    this.chores = this.chores.map(chore => {
+      if (chore.name !== name) {
+        return chore;
+      }
+      
+      completedChore = {
+        ...chore,
+        lastDone: new Date(),
+      };
+      return completedChore;
+    });
+    this.saveChores();
+    
+    return completedChore;
+  }
 }
 
 function useChores() {
@@ -287,10 +358,10 @@ function DialogBox({ children }) {
 }
 
 function Welcome() {
-  const { createList } = useChores();
+  const { create } = useChores();
   
   function handleClickCreate() {
-    createList();
+    create();
   }
 
   return html`

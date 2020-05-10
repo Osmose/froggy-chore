@@ -52,9 +52,9 @@ app.post("/api/list/:listId", (request, response) => {
     { $id: request.params.listId, $json: request.body.json },
     (request, error) => {
       if (error) {
-        response.send({ message: "error!" });
+        response.sendStatus(500);
       } else {
-        response.send({ message: "success" });
+        response.sendStatus(200);
       }
     }
   );

@@ -278,61 +278,27 @@ function makeChores() {
     },
 
     async delete(name) {
-      const chore = {name, delay, lastDone: null};
-      
-      // I know, I'm risking a race condition here but I'm not getting paid for this
-      const newChores = [...chores, chore];
+      const newChores = chores.filter(chore => chore.name !== name);
+      await api.postList(listId, JSON.stringify(newChores));
+      setChores(newChores);
+    },
+
+    async complete(name) {
+      const newChores = chores.map(chore => {
+        if (chore.name !== name) {
+          return chore;
+        }
+        
+        completedChore = {
+          ...chore,
+          lastDone: new Date(),
+        };
+        return completedChore;
+      });
       await api.postList(listId, JSON.stringify(newChores));
       setChores(newChores);
     },
   };
-}
-
-class API {  
-  constructor() {
-    this.chores = [];
-    try {
-      this.chores = JSON.parse(localStorage.chores);
-    } catch (err) { }
-  }
-  
-  saveChores() {
-    localStorage.chores = JSON.stringify(this.chores);
-  }
-  
-  async getChores() {
-    return this.chores;
-  }
-    
-  async addChore(name, delay) {
-    const chore = {name, delay, lastDone: null};
-    this.chores.push(chore);
-    this.saveChores();
-    return chore;
-  }
-  
-  async deleteChore(name) {
-    this.chores = this.chores.filter(chore => chore.name !== name);
-    this.saveChores();
-  }
-  
-  async completeChore(name) {
-    let completedChore;
-    this.chores = this.chores.map(chore => {
-      if (chore.name !== name) {
-        return chore;
-      }
-      
-      completedChore = {
-        ...chore,
-        lastDone: new Date(),
-      };
-      return completedChore;
-    });
-    this.saveChores();
-    
-    return completedChore;
-  }
 }
 
 function useChores() {
@@ -375,6 +341,28 @@ function Welcome() {
 }
 
 function ListView() {
+  const { chores } = useChores();
+
+  if (chores === undefined) {
+    return html`<div>Loading...</div>`;
+  } else if (chores === null) {
+    return html`<
+  }
+
+  return html`
+    <ul id="chore-list">
+      <li class="chore-list-item">
+        <span class="name"></span>
+        <span class="status"></span>
+        <button class="complete" type="button">
+          DONE
+        </button>
+        <button class="delete" type="button">
+          X
+        </button>
+      </li>
+    </ul>
+  `;
 }
 
 function App() {
@@ -392,7 +380,7 @@ function App() {
       ${!listId ? html`
         <${Welcome} />
       ` : html`
-        <${ListView} listId=${listId} />
+        <${ListView} />
       `}
     <//>
   `;

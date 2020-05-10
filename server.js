@@ -32,13 +32,18 @@ app.get("/", (request, response) => {
 
 // GET /api/list/:listId
 app.get("/api/list/:listId", (request, response) => {
+  const listId = request.params.listId;
+  console.log(listId);
   db.get(
     "SELECT * FROM lists WHERE listId = $listId",
-    { $listId: request.params.listId },
+    { $listId: listId },
     (err, list) => {
+      console.log(list);
       if (err) {
         console.error(err);
         response.sendStatus(500);
+      } else if (!list) {
+        response.sendStatus(404);
       } else {
         response.send(list.json);
       }
@@ -51,9 +56,9 @@ app.post("/api/list/:listId", (request, response) => {
   const listId = request.params.listId;
   const json = request.body.json;
   db.run(
-    `INSERT INTO lists (listId, json) VALUES ($listId, $json) ON CONFLICT(listId) UPDATE SET json = $json`,
-    { $id: listId, $json: json },
-    (request, error) => {
+    `INSERT INTO lists (listId, json) VALUES ($listId, $json) ON CONFLICT(listId) DO UPDATE SET json = $json`,
+    { $listId: listId, $json: json },
+    (error) => {
       if (error) {
         console.error(error);
         response.sendStatus(500);

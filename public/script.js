@@ -157,9 +157,9 @@ function choreStatus(chore) {
 //       </div>
 
 class APIError extends Error {
-  constructor(statusCode, ...args) {
+  constructor(status, ...args) {
     super(...args);
-    this.statusCode = statusCode;
+    this.status = status;
   }
 }
 
@@ -170,8 +170,8 @@ const api = {
       return response.json();
     } else {
       throw new APIError(
-        response.statusCode,
-        `GET ${url} failed: ${response.statusCode} ${response.statusText}`
+        response.status,
+        `GET ${url} failed: ${response.status} ${response.statusText}`
       );
     }
   },
@@ -186,8 +186,8 @@ const api = {
       return response.json();
     } else {
       throw new Error(
-        response.statusCode,
-        `POST ${url} failed: ${response.statusCode} ${response.statusText}`
+        response.status,
+        `POST ${url} failed: ${response.status} ${response.statusText}`
       );
     }
   },
@@ -196,8 +196,8 @@ const api = {
     return this.get(`/api/list/${listId}`);
   },
   
-  async postList(listId, json) {
-    return this.post(`/api/list/${listId}`, {json});
+  async postList(listId, list) {
+    return this.post(`/api/list/${listId}`, { json: JSON.stringify(list) });
   }
 };
 
@@ -215,7 +215,8 @@ function makeChores() {
         setChores(await api.getList(listId));
         setListId(listId);
       } catch (err) {
-        if (err.statusCode === 404) {
+        console.log(err);
+        if (err.status === 404) {
           setChores(null)
           setListId(null);
         }
@@ -360,7 +361,7 @@ function App() {
 
   return html`
     <${ChoreContext.Provider} value=${choreInteractor}>
-      <h1>Froggy Chore</h1>
+      <h1><a href="/">Froggy Chore</a></h1>
       ${!listId ? html`
         <${Welcome} />
       ` : html`

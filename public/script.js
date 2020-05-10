@@ -264,12 +264,11 @@ function DialogBox({ children }) {
   return html`
     <div class="box-border dialog-box">
       <div class="portrait">
-        <img src="https://cdn.glitch.com/59c2bae2-f034-4836-ac6d-553a16963ad6%2Ffrog-portrait.png?v=1579411082193">
+        <img src="https://cdn.glitch.com/59c2bae2-f034-4836-ac6d-553a16963ad6%2Ffrog-portrait.png?v=1579411082193" />
       </div>
       <div class="speech">
         <p id="frog-say">
-          ${children}
-          
+          ${children}       
         </p>
       </div>
     </div>
@@ -278,7 +277,12 @@ function DialogBox({ children }) {
 
 function Welcome() {
   return html`
-  
+    <${DialogBox}>
+      I can help you remember when to do your chores!
+      <br /><br />
+      Click the button below to create a chore list.
+    <//>
+    <button class="add">Create chore list</button>
   `;
 }
 
@@ -302,7 +306,7 @@ function App() {
 // Kickoff!
 render(
   html`
-    <${App} listId=${listId} />
+    <${App} />
   `,
   document.getElementById("container")
 );

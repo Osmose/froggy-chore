@@ -37,9 +37,10 @@ app.get("/api/list/:listId", (request, response) => {
     { $listId: request.params.listId },
     (err, list) => {
       if (err) {
-        response.send(list.json);
-      } else {
+        console.error(err);
         response.sendStatus(500);
+      } else {
+        response.send(list.json);
       }
     }
   );
@@ -47,14 +48,17 @@ app.get("/api/list/:listId", (request, response) => {
 
 // POST /api/list/:listId
 app.post("/api/list/:listId", (request, response) => {
+  const listId = request.params.listId;
+  const json = request.body.json;
   db.run(
     `INSERT INTO lists (listId, json) VALUES ($listId, $json) ON CONFLICT(listId) UPDATE SET json = $json`,
-    { $id: request.params.listId, $json: request.body.json },
+    { $id: listId, $json: json },
     (request, error) => {
       if (error) {
+        console.error(error);
         response.sendStatus(500);
       } else {
-        response.sendStatus(200);
+        response.send(json);
       }
     }
   );

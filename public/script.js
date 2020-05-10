@@ -180,7 +180,7 @@ const api = {
     const response = await fetch(url, {
       method: "POST",
       body: JSON.stringify(params),
-      headers: { "Content-Type": "text/json" }
+      headers: { "Content-Type": "application/json" }
     });
     if (response.ok) {
       return response.json();
@@ -212,7 +212,7 @@ function makeChores() {
     
     async load(listId) {
       try {
-        setChores(await api.get(listId));
+        setChores(await api.getList(listId));
         setListId(listId);
       } catch (err) {
         if (err.statusCode === 404) {

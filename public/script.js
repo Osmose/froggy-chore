@@ -276,7 +276,9 @@ function DialogBox({ children }) {
 }
 
 function Welcome() {
-  function handleClickCreate() {
+  async function handleClickCreate() {
+    const listId = uuidv4();
+    const json = JSON.stringify([])
     
   }
 

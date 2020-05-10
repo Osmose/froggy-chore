@@ -45,7 +45,7 @@ app.get("/api/list/:listId", (request, response) => {
       } else if (!list) {
         response.sendStatus(404);
       } else {
-        response.send(list.json);
+        response.type('application/json').send(list.json);
       }
     }
   );
@@ -63,7 +63,7 @@ app.post("/api/list/:listId", (request, response) => {
         console.error(error);
         response.sendStatus(500);
       } else {
-        response.send(json);
+        response.type('application/json').send(json);
       }
     }
   );

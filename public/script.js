@@ -137,13 +137,7 @@ function choreStatus(chore) {
 //         </template>
 //       </ul>
 
-//       <form id="new-chore-form">
-//         <input type="text" name="name" placeholder="Chore name" required>
-//         <input type="number" name="delay" placeholder="Days until due again">
-//         <button type="submit" class="add">
-//           Add
-//         </button>
-//       </form>
+//       
 //       <div class="box-border dialog-box">
 //         <div class="portrait">
 //           <img src="https://cdn.glitch.com/59c2bae2-f034-4836-ac6d-553a16963ad6%2Ffrog-portrait.png?v=1579411082193">
@@ -225,8 +219,8 @@ function makeChores() {
 
     async create() {
       const listId = uuidv4();
-      const json = JSON.stringify([]);
-      await api.postList(listId, json);
+      const chores = [];
+      await api.postList(listId, chores);
       setChores([]);
       setListId(listId);
       history.pushState(null, '', `?listId=${listId}`);
@@ -237,13 +231,13 @@ function makeChores() {
       
       // I know, I'm risking a race condition here but I'm not getting paid for this
       const newChores = [...chores, chore];
-      await api.postList(listId, JSON.stringify(newChores));
+      await api.postList(listId, newChores);
       setChores(newChores);
     },
 
     async remove(name) {
       const newChores = chores.filter(chore => chore.name !== name);
-      await api.postList(listId, JSON.stringify(newChores));
+      await api.postList(listId, newChores);
       setChores(newChores);
     },
 
@@ -259,7 +253,7 @@ function makeChores() {
         };
         return completedChore;
       });
-      await api.postList(listId, JSON.stringify(newChores));
+      await api.postList(listId, newChores);
       setChores(newChores);
     },
   };
@@ -301,6 +295,26 @@ function Welcome() {
   `;
 }
 
+function AddChoreForm() {
+  const { add } = useChores();
+  const [name, setName] = useState();
+  const [delay, setDelay] = useState();
+
+  async function handleSubmit() {
+
+  }
+
+  return html`
+    <form id="new-chore-form" onSubmit=${handleSubmit}>
+      <input type="text" name="name" placeholder="Chore name" required value={}>
+      <input type="number" name="delay" placeholder="Days until due again">
+      <button type="submit" class="add">
+        Add
+      </button>
+    </form>
+  `;
+}
+
 function ListView() {
   const { chores, complete, remove } = useChores();
   const [quote, setQuote] = useState(html`
@@ -324,7 +338,7 @@ function ListView() {
 
   async function handleClickDelete(chore) {
     await remove(chore.name);
-    setQuote(randomChoice(DELETE_CHORE_QUOTES));
+    setQuote(randomChoice(REMOVE_CHORE_QUOTES));
   }
 
   return html`
@@ -342,6 +356,7 @@ function ListView() {
         </li>
       `)}
     </ul>
+    <${AddChoreForm} />
     <${DialogBox}>
       ${quote}
     <//>

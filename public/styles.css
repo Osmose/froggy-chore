@@ -22,6 +22,10 @@ body {
   max-width: 960px;
 }
 
+a {
+  color: #7d4900;
+}
+
 h1 {
   font-size: 56px;
   text-align: center;

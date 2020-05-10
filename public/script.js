@@ -257,22 +257,45 @@ function useChoreList(listId) {
   };
 }
 
+// I can help you remember when to do your chores! <br><br>
+//           Fill out the fields and click add to add a chore. Click DONE when you've performed the chore and I'll tell you how long until it's due again. Click the X to remove a chore.
+
+function DialogBox({ children }) {
+  return html`
+    <div class="box-border dialog-box">
+      <div class="portrait">
+        <img src="https://cdn.glitch.com/59c2bae2-f034-4836-ac6d-553a16963ad6%2Ffrog-portrait.png?v=1579411082193">
+      </div>
+      <div class="speech">
+        <p id="frog-say">
+          ${children}
+          
+        </p>
+      </div>
+    </div>
+  `;
+}
+
+function Welcome() {
+  return html`
+  
+  `;
+}
+
+function ListView() {
+}
+
 function App() {
   const url = new URL(window.location);
   const listId = url.searchParams.get("listId");
-  const { choreList } = useChoreList(listId);
 
   return html`
     <h1>Froggy Chore</h1>
-  `;
-  if (!listId) {
-    return html`
-      <div>List Not Found</div>
-    `;
-  }
-
-  return html`
-    <div>Oh no</div>
+    ${!listId ? html`
+      <${Welcome} />
+    ` : html`
+      <${ListView} listId=${listId} />
+    `}
   `;
 }
 

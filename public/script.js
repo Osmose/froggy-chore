@@ -1,29 +1,34 @@
 /* global htmPreact */
-const { html, render, createContext, useContext, useState, useEffect } = htmPreact;
+const {
+  html,
+  render,
+  createContext,
+  useContext,
+  useState,
+  useEffect
+} = htmPreact;
 
 const ADD_CHORE_QUOTES = [
-  'A small price to pay for Froggy Chore',
-  'KERO KERO',
-  'You’re gonna do great!',
-  'Good luck!',
+  "A small price to pay for Froggy Chore",
+  "KERO KERO",
+  "You’re gonna do great!",
+  "Good luck!"
 ];
 
 const DO_CHORE_QUOTES = [
-  'Awwwwwwwwwww yeahhhhhhhhhh',
-  'Nice job!',
-  'お疲れ様です',
-  'Job’s done.',
-  '!!!',
+  "Awwwwwwwwwww yeahhhhhhhhhh",
+  "Nice job!",
+  "お疲れ様です",
+  "Job’s done.",
+  "!!!"
 ];
 
 const REMOVE_CHORE_QUOTES = [
-  'Later gator',
-  'Who even cared about that chore anyway, jeez',
-  'YEET',
-  'Get outta here',
+  "Later gator",
+  "Who even cared about that chore anyway, jeez",
+  "YEET",
+  "Get outta here"
 ];
-
-
 
 /**
  * Wait a given amount of milliseconds
@@ -70,13 +75,13 @@ function randomChoice(list) {
 function choreStatus(chore) {
   const now = new Date();
   const choreLastDone = new Date(chore.lastDone);
-  
+
   const diff = now - choreLastDone;
   const delayMs = chore.delay * 24 * 60 * 60 * 1000;
   if (diff >= delayMs) {
-    return 'Due today';
+    return "Due today";
   } else {
-    const dayDiff = Math.ceil((delayMs - diff) / 24 / 60 / 60 / 1000);    
+    const dayDiff = Math.ceil((delayMs - diff) / 24 / 60 / 60 / 1000);
     return `Due in ${dayDiff} days`;
   }
 }
@@ -98,7 +103,7 @@ function choreStatus(chore) {
 // // When the new chore form is submitted, save the chore and add it to the list
 // dom.newChoreForm.addEventListener('submit', async event => {
 //   event.preventDefault();
-  
+
 //   const formData = new FormData(dom.newChoreForm);
 //   const name = formData.get('name');
 //   const delay = formData.get('delay')
@@ -109,14 +114,14 @@ function choreStatus(chore) {
 //     window.alert(`Failed to add chore: ${err}`);
 //     return;
 //   }
-  
+
 //   const listItem = renderTemplate(dom.choreListItemTemplate, {
 //     name: chore.name,
 //     status: choreStatus(chore),
 //   });
 //   dom.choreList.appendChild(listItem);
 //   dom.newChoreForm.reset();
-  
+
 //   frogSay(randomChoice(ADD_CHORE_QUOTES));
 // });
 
@@ -125,13 +130,13 @@ function choreStatus(chore) {
 //   if (!event.target.matches('.chore-list-item .delete')) {
 //     return;
 //   }
-  
+
 //   event.stopPropagation();
 //   const listItem = event.target.closest('.chore-list-item');
 //   const name = listItem.querySelector('.name').textContent;
 //   await api.deleteChore(name);
 //   listItem.remove();
-  
+
 //   frogSay(randomChoice(REMOVE_CHORE_QUOTES));
 // });
 
@@ -139,7 +144,7 @@ function choreStatus(chore) {
 //   if (!event.target.matches('.chore-list-item .complete')) {
 //     return;
 //   }
-  
+
 //   event.stopPropagation();
 //   const listItem = event.target.closest('.chore-list-item');
 //   const name = listItem.querySelector('.name').textContent;
@@ -150,7 +155,7 @@ function choreStatus(chore) {
 //     status: choreStatus(chore),
 //   });
 //   listItem.parentNode.replaceChild(newListItem, listItem);
-  
+
 //   frogSay(randomChoice(DO_CHORE_QUOTES));
 // });
 
@@ -169,7 +174,7 @@ function choreStatus(chore) {
 //           </li>
 //         </template>
 //       </ul>
-      
+
 //       <form id="new-chore-form">
 //         <input type="text" name="name" placeholder="Chore name" required>
 //         <input type="number" name="delay" placeholder="Days until due again">
@@ -189,72 +194,73 @@ function choreStatus(chore) {
 //         </div>
 //       </div>
 
-class API {
+class APIError extends Error {
+  constructor(statusCode, ...args) {
+    super(...args);
+    this.statusCode = statusCode;
+  }
+}
+
+const api = {
   async get(url) {
-    const response = await fetch(url, { method: 'GET' });
+    const response = await fetch(url, { method: "GET" });
     if (response.ok) {
       return response.json();
     } else {
-      throw new Error()
+      throw new APIError(
+        response.statusCode,
+        `GET ${url} failed: ${response.statusCode} ${response.statusText}`
+      );
     }
+  },
+
+  async post(url, params) {
+    const response = await fetch(url, {
+      method: "POST",
+      body: JSON.stringify(params),
+      headers: { "Content-Type": "text/json" }
+    });
+    if (response.ok) {
+      return response.json();
+    } else {
+      throw new Error(
+        response.statusCode,
+        `POST ${url} failed: ${response.statusCode} ${response.statusText}`
+      );
+    }
+  },
+  
+  async getList(listId) {
+    return this.get(`/api/list/${listId}`);
+  },
+  
+  async postList(listId, json) {
+    return this.post(`/api/list/${listId}`, {json});
   }
-}
+};
 
 function useChoreList(listId) {
+  const [choreList, setChoreList] = useState(undefined);
   
-}
-
-class API {  
-  constructor() {
-    this.chores = [];
+  useEffect(async () => {
     try {
-      this.chores = JSON.parse(localStorage.chores);
-    } catch (err) { }
-  }
-  
-  saveChores() {
-    localStorage.chores = JSON.stringify(this.chores);
-  }
-  
-  async getChores() {
-    return this.chores;
-  }
-    
-  async addChore(name, delay) {
-    const chore = {name, delay, lastDone: null};
-    this.chores.push(chore);
-    this.saveChores();
-    return chore;
-  }
-  
-  async deleteChore(name) {
-    this.chores = this.chores.filter(chore => chore.name !== name);
-    this.saveChores();
-  }
-  
-  async completeChore(name) {
-    let completedChore;
-    this.chores = this.chores.map(chore => {
-      if (chore.name !== name) {
-        return chore;
+      setChoreList(await api.get(listId));
+    } catch (err) {
+      if (err.statusCode === 404) {
+        setChoreList(null)
       }
-      
-      completedChore = {
-        ...chore,
-        lastDone: new Date(),
-      };
-      return completedChore;
-    });
-    this.saveChores();
-    
-    return completedChore;
-  }
+    }
+  }, [listId]);
+  
+  return {
+    choreList
+  };
 }
-
 
 function App() {
   const url = new URL(window.location);
-  const listId = url.searchParams.get('listId');
+  const listId = url.searchParams.get("listId");
+  const { choreList } = useChoreList(listId);
 
   return html`
     <h1>Froggy Chore</h1>
@@ -264,20 +270,22 @@ function App() {
       <div>List Not Found</div>
     `;
   }
-  
-  return html`<div>Oh no</div>`;
+
+  return html`
+    <div>Oh no</div>
+  `;
 }
 
-// Kickoff! 
+// Kickoff!
 render(
   html`
     <${App} listId=${listId} />
   `,
-  document.getElementById('container'),
+  document.getElementById("container")
 );
 
 // (async function() {
-  
+
 //   // Build the chore list
 //   for (const chore of await api.getChores()) {
 //     const listItem = renderTemplate(dom.choreListItemTemplate, {

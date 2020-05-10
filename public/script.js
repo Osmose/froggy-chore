@@ -1,3 +1,6 @@
+/* global htmPreact */
+const { html, render, createContext, useContext, useState, useEffect } = htmPreact;
+
 const ADD_CHORE_QUOTES = [
   'A small price to pay for Froggy Chore',
   'KERO KERO',
@@ -20,52 +23,7 @@ const REMOVE_CHORE_QUOTES = [
   'Get outta here',
 ];
 
-class API {  
-  constructor() {
-    this.chores = [];
-    try {
-      this.chores = JSON.parse(localStorage.chores);
-    } catch (err) { }
-  }
-  
-  saveChores() {
-    localStorage.chores = JSON.stringify(this.chores);
-  }
-  
-  async getChores() {
-    return this.chores;
-  }
-    
-  async addChore(name, delay) {
-    const chore = {name, delay, lastDone: null};
-    this.chores.push(chore);
-    this.saveChores();
-    return chore;
-  }
-  
-  async deleteChore(name) {
-    this.chores = this.chores.filter(chore => chore.name !== name);
-    this.saveChores();
-  }
-  
-  async completeChore(name) {
-    let completedChore;
-    this.chores = this.chores.map(chore => {
-      if (chore.name !== name) {
-        return chore;
-      }
-      
-      completedChore = {
-        ...chore,
-        lastDone: new Date(),
-      };
-      return completedChore;
-    });
-    this.saveChores();
-    
-    return completedChore;
-  }
-}
+
 
 /**
  * Wait a given amount of milliseconds
@@ -123,87 +81,209 @@ function choreStatus(chore) {
   }
 }
 
-let api = new API();
-const dom = {
-  body: document.body,
-  newChoreForm: document.querySelector('#new-chore-form'),
-  passwordForm: document.querySelector('#password-form'),
-  choreList: document.querySelector('#chore-list'),
-  choreListItemTemplate: document.querySelector('#chore-list-item-template'),
-  frogSay: document.querySelector('#frog-say'),
-};
+// let api = new API();
+// const dom = {
+//   body: document.body,
+//   newChoreForm: document.querySelector('#new-chore-form'),
+//   passwordForm: document.querySelector('#password-form'),
+//   choreList: document.querySelector('#chore-list'),
+//   choreListItemTemplate: document.querySelector('#chore-list-item-template'),
+//   frogSay: document.querySelector('#frog-say'),
+// };
 
-function frogSay(text) {
-  dom.frogSay.textContent = text;
+// function frogSay(text) {
+//   dom.frogSay.textContent = text;
+// }
+
+// // When the new chore form is submitted, save the chore and add it to the list
+// dom.newChoreForm.addEventListener('submit', async event => {
+//   event.preventDefault();
+  
+//   const formData = new FormData(dom.newChoreForm);
+//   const name = formData.get('name');
+//   const delay = formData.get('delay')
+//   let chore;
+//   try {
+//     chore = await api.addChore(name, delay);
+//   } catch (err) {
+//     window.alert(`Failed to add chore: ${err}`);
+//     return;
+//   }
+  
+//   const listItem = renderTemplate(dom.choreListItemTemplate, {
+//     name: chore.name,
+//     status: choreStatus(chore),
+//   });
+//   dom.choreList.appendChild(listItem);
+//   dom.newChoreForm.reset();
+  
+//   frogSay(randomChoice(ADD_CHORE_QUOTES));
+// });
+
+// // When a delete button is clicked, delete the associated chore and then remove it from the list.
+// dom.choreList.addEventListener('click', async event => {
+//   if (!event.target.matches('.chore-list-item .delete')) {
+//     return;
+//   }
+  
+//   event.stopPropagation();
+//   const listItem = event.target.closest('.chore-list-item');
+//   const name = listItem.querySelector('.name').textContent;
+//   await api.deleteChore(name);
+//   listItem.remove();
+  
+//   frogSay(randomChoice(REMOVE_CHORE_QUOTES));
+// });
+
+// dom.choreList.addEventListener('click', async event => {
+//   if (!event.target.matches('.chore-list-item .complete')) {
+//     return;
+//   }
+  
+//   event.stopPropagation();
+//   const listItem = event.target.closest('.chore-list-item');
+//   const name = listItem.querySelector('.name').textContent;
+//   const chore = await api.completeChore(name);
+
+//   const newListItem = renderTemplate(dom.choreListItemTemplate, {
+//     name: chore.name,
+//     status: choreStatus(chore),
+//   });
+//   listItem.parentNode.replaceChild(newListItem, listItem);
+  
+//   frogSay(randomChoice(DO_CHORE_QUOTES));
+// });
+
+//       <h1>Froggy Chore</h1>
+//       <ul id="chore-list">
+//         <template id="chore-list-item-template">
+//           <li class="chore-list-item">
+//             <span class="name"><slot name="name"></slot></span>
+//             <span class="status"><slot name="status"></slot></span>
+//             <button class="complete" type="button">
+//               DONE
+//             </button>
+//             <button class="delete" type="button">
+//               X
+//             </button>
+//           </li>
+//         </template>
+//       </ul>
+      
+//       <form id="new-chore-form">
+//         <input type="text" name="name" placeholder="Chore name" required>
+//         <input type="number" name="delay" placeholder="Days until due again">
+//         <button type="submit" class="add">
+//           Add
+//         </button>
+//       </form>
+//       <div class="box-border dialog-box">
+//         <div class="portrait">
+//           <img src="https://cdn.glitch.com/59c2bae2-f034-4836-ac6d-553a16963ad6%2Ffrog-portrait.png?v=1579411082193">
+//         </div>
+//         <div class="speech">
+//           <p id="frog-say">
+//             I can help you remember when to do your chores! <br><br>
+//             Fill out the fields and click add to add a chore. Click DONE when you've performed the chore and I'll tell you how long until it's due again. Click the X to remove a chore.
+//           </p>
+//         </div>
+//       </div>
+
+class API {
+  async get(url) {
+    const response = await fetch(url, { method: 'GET' });
+    if (response.ok) {
+      return response.json();
+    } else {
+      throw new Error()
+    }
+  }
 }
 
-// When the new chore form is submitted, save the chore and add it to the list
-dom.newChoreForm.addEventListener('submit', async event => {
-  event.preventDefault();
+function useChoreList(listId) {
   
-  const formData = new FormData(dom.newChoreForm);
-  const name = formData.get('name');
-  const delay = formData.get('delay')
-  let chore;
-  try {
-    chore = await api.addChore(name, delay);
-  } catch (err) {
-    window.alert(`Failed to add chore: ${err}`);
-    return;
+}
+
+class API {  
+  constructor() {
+    this.chores = [];
+    try {
+      this.chores = JSON.parse(localStorage.chores);
+    } catch (err) { }
   }
   
-  const listItem = renderTemplate(dom.choreListItemTemplate, {
-    name: chore.name,
-    status: choreStatus(chore),
-  });
-  dom.choreList.appendChild(listItem);
-  dom.newChoreForm.reset();
-  
-  frogSay(randomChoice(ADD_CHORE_QUOTES));
-});
-
-// When a delete button is clicked, delete the associated chore and then remove it from the list.
-dom.choreList.addEventListener('click', async event => {
-  if (!event.target.matches('.chore-list-item .delete')) {
-    return;
+  saveChores() {
+    localStorage.chores = JSON.stringify(this.chores);
   }
   
-  event.stopPropagation();
-  const listItem = event.target.closest('.chore-list-item');
-  const name = listItem.querySelector('.name').textContent;
-  await api.deleteChore(name);
-  listItem.remove();
-  
-  frogSay(randomChoice(REMOVE_CHORE_QUOTES));
-});
-
-dom.choreList.addEventListener('click', async event => {
-  if (!event.target.matches('.chore-list-item .complete')) {
-    return;
+  async getChores() {
+    return this.chores;
+  }
+    
+  async addChore(name, delay) {
+    const chore = {name, delay, lastDone: null};
+    this.chores.push(chore);
+    this.saveChores();
+    return chore;
   }
   
-  event.stopPropagation();
-  const listItem = event.target.closest('.chore-list-item');
-  const name = listItem.querySelector('.name').textContent;
-  const chore = await api.completeChore(name);
-
-  const newListItem = renderTemplate(dom.choreListItemTemplate, {
-    name: chore.name,
-    status: choreStatus(chore),
-  });
-  listItem.parentNode.replaceChild(newListItem, listItem);
+  async deleteChore(name) {
+    this.chores = this.chores.filter(chore => chore.name !== name);
+    this.saveChores();
+  }
   
-  frogSay(randomChoice(DO_CHORE_QUOTES));
-});
+  async completeChore(name) {
+    let completedChore;
+    this.chores = this.chores.map(chore => {
+      if (chore.name !== name) {
+        return chore;
+      }
+      
+      completedChore = {
+        ...chore,
+        lastDone: new Date(),
+      };
+      return completedChore;
+    });
+    this.saveChores();
+    
+    return completedChore;
+  }
+}
+
+
+function App() {
+  const url = new URL(window.location);
+  const listId = url.searchParams.get('listId');
+
+  return html`
+    <h1>Froggy Chore</h1>
+  `;
+  if (!listId) {
+    return html`
+      <div>List Not Found</div>
+    `;
+  }
+  
+  return html`<div>Oh no</div>`;
+}
 
 // Kickoff! 
-(async function() {
-  // Build the chore list
-  for (const chore of await api.getChores()) {
-    const listItem = renderTemplate(dom.choreListItemTemplate, {
-      name: chore.name,
-      status: choreStatus(chore),
-    });
-    dom.choreList.appendChild(listItem);
-  }
-})();
+render(
+  html`
+    <${App} listId=${listId} />
+  `,
+  document.getElementById('container'),
+);
+
+// (async function() {
+  
+//   // Build the chore list
+//   for (const chore of await api.getChores()) {
+//     const listItem = renderTemplate(dom.choreListItemTemplate, {
+//       name: chore.name,
+//       status: choreStatus(chore),
+//     });
+//     dom.choreList.appendChild(listItem);
+//   }
+// })();

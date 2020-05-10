@@ -239,22 +239,33 @@ const api = {
   }
 };
 
-function useChoreList(listId) {
-  const [choreList, setChoreList] = useState(undefined);
-  
-  useEffect(async () => {
-    try {
-      setChoreList(await api.get(listId));
-    } catch (err) {
-      if (err.statusCode === 404) {
-        setChoreList(null)
-      }
-    }
-  }, [listId]);
+const ChoreContext = createContext({});
+
+function makeChores(listId) {
+  const [chores, setChores] = useState(undefined);
   
   return {
-    choreList
+    chores,
+    
+    load(listId) {
+      try {
+        setChores(await api.get(listId));
+      } catch (err) {
+        if (err.statusCode === 404) {
+          setChores(null)
+        }
+      }
+    },
+
+    async createList() {
+      const listId = uuidv4();
+      const json = JSON.stringify([])
+    }
   };
+}
+
+function useChores() {
+  return useContext(ChoreContext);
 }
 
 // I can help you remember when to do your chores! <br><br>
@@ -276,10 +287,10 @@ function DialogBox({ children }) {
 }
 
 function Welcome() {
-  async function handleClickCreate() {
-    const listId = uuidv4();
-    const json = JSON.stringify([])
-    
+  const { createList } = useChores();
+  
+  function handleClickCreate() {
+    createList();
   }
 
   return html`
@@ -298,14 +309,21 @@ function ListView() {
 function App() {
   const url = new URL(window.location);
   const listId = url.searchParams.get("listId");
+  const choreInteractor = makeChores();
+
+  useEffect(() => {
+    choreInteractor.load(listId);
+  }, []);
 
   return html`
-    <h1>Froggy Chore</h1>
-    ${!listId ? html`
-      <${Welcome} />
-    ` : html`
-      <${ListView} listId=${listId} />
-    `}
+    <${ChoreContext.Provider} value=${choreInteractor}>
+      <h1>Froggy Chore</h1>
+      ${!listId ? html`
+        <${Welcome} />
+      ` : html`
+        <${ListView} listId=${listId} />
+      `}
+    <//>
   `;
 }
 

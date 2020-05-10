@@ -295,19 +295,37 @@ function Welcome() {
   `;
 }
 
-function AddChoreForm() {
+function AddChoreForm({ setQuote }) {
   const { add } = useChores();
   const [name, setName] = useState();
   const [delay, setDelay] = useState();
 
-  async function handleSubmit() {
-
+  async function handleSubmit(event) {
+    event.preventDefault();
+    
+    await add(name, delay);
+    setName('');
+    setDelay('');
+    setQuote(randomChoice(ADD_CHORE_QUOTES));
   }
 
   return html`
     <form id="new-chore-form" onSubmit=${handleSubmit}>
-      <input type="text" name="name" placeholder="Chore name" required value={}>
-      <input type="number" name="delay" placeholder="Days until due again">
+      <input 
+        type="text" 
+        name="name" 
+        placeholder="Chore name" 
+        required 
+        value=${name} 
+        onInput=${e => setName(e.target.value)}
+      />
+      <input 
+        type="number" 
+        name="delay" 
+        placeholder="Days until due again"
+        value=${delay}
+        onInput=${e => setDelay(e.target.value)}
+      />
       <button type="submit" class="add">
         Add
       </button>
@@ -356,7 +374,7 @@ function ListView() {
         </li>
       `)}
     </ul>
-    <${AddChoreForm} />
+    <${AddChoreForm} setQuote=${setQuote} />
     <${DialogBox}>
       ${quote}
     <//>

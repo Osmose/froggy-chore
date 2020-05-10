@@ -30,44 +30,6 @@ const REMOVE_CHORE_QUOTES = [
   "Get outta here"
 ];
 
-/**
- * Wait a given amount of milliseconds
- */
-async function wait(delay) {
-  return new Promise(resolve => {
-    window.setTimeout(resolve, delay);
-  });
-}
-
-/**
- * Take a <template> tag and create a new DOM node using it as a, well, template.
- * While not quite their intended use, this helper assumes we use <slot> tags as
- * placeholders for values to format the template with. For example, given the
- * HTML:
- *
- *   <template id="example">
- *     <span><slot name="somevalue"></slot></span>
- *   </template>
- *
- * We can call this function:
- *
- *   renderTemplate(document.getElementById('example'), {somevalue: 'foobar'});
- *
- * Which will return a DOM node structured like this:
- *
- *   <span>foobar</span>
- */
-function renderTemplate(templateNode, values) {
-  const renderedDom = document.importNode(templateNode.content, true);
-  for (const [key, value] of Object.entries(values)) {
-    const domNode = renderedDom.querySelector(`slot[name="${key}"]`);
-    if (domNode) {
-      domNode.replaceWith(value);
-    }
-  }
-  return renderedDom;
-}
-
 function randomChoice(list) {
   return list[Math.floor(Math.random() * list.length)];
 }
@@ -266,6 +228,7 @@ function makeChores() {
       await api.postList(listId, json);
       setChores([]);
       setListId(listId);
+      history.pushState(null, '', `?listId=${listId}`);
     },
 
     async add(name, delay) {
@@ -277,7 +240,7 @@ function makeChores() {
       setChores(newChores);
     },
 
-    async delete(name) {
+    async remove(name) {
       const newChores = chores.filter(chore => chore.name !== name);
       await api.postList(listId, JSON.stringify(newChores));
       setChores(newChores);
@@ -304,9 +267,6 @@ function makeChores() {
 function useChores() {
   return useContext(ChoreContext);
 }
-
-// I can help you remember when to do your chores! <br><br>
-//           Fill out the fields and click add to add a chore. Click DONE when you've performed the chore and I'll tell you how long until it's due again. Click the X to remove a chore.
 
 function DialogBox({ children }) {
   return html`
@@ -341,27 +301,49 @@ function Welcome() {
 }
 
 function ListView() {
-  const { chores } = useChores();
+  const { chores, complete, remove } = useChores();
+  const [quote, setQuote] = useState(html`
+    I can help you remember when to do your chores! 
+    <br /><br />
+    Fill out the fields and click add to add a chore. 
+    Click DONE when you've performed the chore and I'll tell you how long until it's due again. 
+    Click the X to remove a chore.
+  `);
 
   if (chores === undefined) {
-    return html`<div>Loading...</div>`;
+    return html`<div class="message">Loading...</div>`;
   } else if (chores === null) {
-    return html`<
+    return html`<div class="message">List not found.</div>`;
+  }
+
+  async function handleClickDone(chore) {
+    await complete(chore.name);
+    setQuote(randomChoice(DO_CHORE_QUOTES));
+  }
+
+  async function handleClickDelete(chore) {
+    await remove(chore.name);
+    setQuote(randomChoice(DELETE_CHORE_QUOTES));
   }
 
   return html`
     <ul id="chore-list">
-      <li class="chore-list-item">
-        <span class="name"></span>
-        <span class="status"></span>
-        <button class="complete" type="button">
-          DONE
-        </button>
-        <button class="delete" type="button">
-          X
-        </button>
-      </li>
+      ${chores.map(chore => html`
+        <li class="chore-list-item" key=${chore.name}>
+          <span class="name">${chore.name}</span>
+          <span class="status">${choreStatus(chore)}</span>
+          <button class="complete" type="button" onClick=${() => handleClickDone(chore)}>
+            DONE
+          </button>
+          <button class="delete" type="button" onClick=${() => handleClickDelete(chore)}>
+            X
+          </button>
+        </li>
+      `)}
     </ul>
+    <${DialogBox}>
+      ${quote}
+    <//>
   `;
 }
 
@@ -371,7 +353,9 @@ function App() {
   const choreInteractor = makeChores();
 
   useEffect(() => {
-    choreInteractor.load(listId);
+    if (listId) {
+      choreInteractor.load(listId);
+    }
   }, []);
 
   return html`
@@ -394,14 +378,4 @@ render(
   document.getElementById("container")
 );
 
-// (async function() {
-
-//   // Build the chore list
-//   for (const chore of await api.getChores()) {
-//     const listItem = renderTemplate(dom.choreListItemTemplate, {
-//       name: chore.name,
-//       status: choreStatus(chore),
-//     });
-//     dom.choreList.appendChild(listItem);
-//   }
-// })();
+window.api = api;

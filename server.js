@@ -29,8 +29,8 @@ app.get("/", (request, response) => {
   response.sendFile(`${__dirname}/views/index.html`);
 });
 
-// GET /api/list/:
-app.get("/api/list/${listId}", (request, response) => {
+// GET /api/list/:listId
+app.get("/api/list/:listId", (request, response) => {
   db.get(
     "SELECT * FROM lists WHERE id = $id",
     { $id: request.params.listId },
@@ -44,8 +44,8 @@ app.get("/api/list/${listId}", (request, response) => {
   );
 });
 
-// endpoint to add a dream to the database
-app.post("/api/list/${listId}", (request, response) => {
+// POST /api/list/:listId
+app.post("/api/list/:listId", (request, response) => {
   db.run(
     `INSERT INTO lists (id, json) VALUES ($id, $json) ON CONFLICT(id) UPDATE SET json = $json`,
     { $id: request.params.listId, $json: request.body.json },

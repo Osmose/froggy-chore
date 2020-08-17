@@ -34,6 +34,15 @@ function randomChoice(list) {
   return list[Math.floor(Math.random() * list.length)];
 }
 
+function choreTimeUntilDue(chore) {
+  const now = new Date();
+  const choreLastDone = new Date(chore.lastDone);
+
+  const diff = now - choreLastDone;
+  const delayMs = chore.delay * 24 * 60 * 60 * 1000;
+  return delayMs - diff;
+}
+
 function choreStatus(chore) {
   const now = new Date();
   const choreLastDone = new Date(chore.lastDone);
@@ -265,10 +274,11 @@ function ListView() {
   }
   
   const sortedChores = [...chores];
-  sortedChores.sort
+  sortedChores.sort((a, b) => choreTimeUntilDue(a) - choreTimeUntilDue(b));
+  
   return html`
     <ul id="chore-list">
-      ${chores.map(chore => html`
+      ${sortedChores.map(chore => html`
         <li class="chore-list-item" key=${chore.name}>
           <span class="name">${chore.name}</span>
           <span class="status">${choreStatus(chore)}</span>

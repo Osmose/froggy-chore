@@ -263,7 +263,9 @@ function ListView() {
     await remove(chore.name);
     setQuote(randomChoice(REMOVE_CHORE_QUOTES));
   }
-
+  
+  const sortedChores = [...chores];
+  sortedChores.sort
   return html`
     <ul id="chore-list">
       ${chores.map(chore => html`

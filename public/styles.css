@@ -41,6 +41,11 @@ h1 {
   flex-direction: row;
   margin-bottom: 8px;
   line-height: 32px;
+  padding: 8px;
+}
+
+.chore-list-item:nth-child(even) {
+  background: #ffde00;
 }
 
 .chore-list-item .name {

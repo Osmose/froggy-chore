@@ -1,4 +1,4 @@
-/* global htmPreact */
+/* global htmPreact uuidv4 */
 const {
   html,
   render,
@@ -32,7 +32,7 @@ const REMOVE_CHORE_QUOTES = [
 
 const levelUpAudio = document.querySelector('#dqlevelup');
 function playLevelUp() {
-  levelUpAudio
+  levelUpAudio.play();
 }
 
 function randomChoice(list) {
@@ -162,14 +162,14 @@ function makeChores() {
           return chore;
         }
         
-        completedChore = {
+        return {
           ...chore,
           lastDone: new Date(),
         };
-        return completedChore;
       });
       await api.postList(listId, newChores);
       setChores(newChores);
+      playLevelUp();
     },
   };
 }

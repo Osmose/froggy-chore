@@ -30,6 +30,11 @@ const REMOVE_CHORE_QUOTES = [
   "Get outta here"
 ];
 
+const levelUpAudio = document.querySelector('#dqlevelup');
+function playLevelUp() {
+  levelUpAudio
+}
+
 function randomChoice(list) {
   return list[Math.floor(Math.random() * list.length)];
 }

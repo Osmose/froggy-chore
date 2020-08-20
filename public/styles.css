@@ -41,11 +41,13 @@ h1 {
   flex-direction: row;
   margin-bottom: 8px;
   line-height: 32px;
-  padding: 8px;
+  padding: 4px;
+  border-radius: 6px;
+  align-items: center;
 }
 
 .chore-list-item:nth-child(even) {
-  background: #ffde00;
+  background: #ff8584;
 }
 
 .chore-list-item .name {

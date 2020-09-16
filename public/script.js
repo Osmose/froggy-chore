@@ -27,7 +27,9 @@ const REMOVE_CHORE_QUOTES = [
   "Later gator",
   "Who even cared about that chore anyway, jeez",
   "YEET",
-  "Get outta here"
+  "Get outta here",
+  "OH NO",
+  "WHY"
 ];
 
 const levelUpAudio = document.querySelector('#dqlevelup');

@@ -64,7 +64,6 @@ h1 {
 .chore-list-item button {
   flex: 0 0 auto;
   margin-left: 8px;
-  height: 100%;
 }
 
 button.complete,
@@ -106,7 +105,7 @@ button {
   border-width: 3px;
   border-style: solid;
   border-radius: 6px;
-  padding: 5px 7px 0px;
+  padding: 10px 14px 5px;
   cursor: pointer;
 }
 

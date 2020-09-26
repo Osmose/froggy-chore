@@ -185,20 +185,20 @@ function makeChores() {
           return chore;
         }
         
+        
+        const dayMs = 24 * 60 * 60 * 1000;
         const timeUntilDue = choreTimeUntilDue(chore);
-        let newLastDone = new Date(chore.lastDone.getTime());
+        let newLastDone = null;
         if (timeUntilDue < 0) {
           const now = new Date();
-          const dayMs = 24 * 60 * 60 * 1000;
           const delayMs = chore.delay * dayMs;
-          newLastDone = now.getTime() - delayMs
-          newLastDone.setDate(new.getDate())
+          newLastDone = new Date(now.getTime() - delayMs + dayMs);
         } else {
-          newLastDone.setDate(newLastDone.getDate() - 1);
+          newLastDone = new Date(chore.lastDone.getTime() + dayMs);
         }
         return {
           ...chore,
-          lastDone: new Date(),
+          lastDone: newLastDone,
         };
       });
       await api.postList(listId, newChores);

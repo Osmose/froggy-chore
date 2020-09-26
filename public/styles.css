@@ -15,9 +15,11 @@ body {
   color: #7d4900;
   font-family: "Slapface", "Benton Sans", "Helvetica Neue", helvetica, arial, sans-serif;
   font-size: 22px;
+  margin: 0;
 }
 
 #container {
+  padding: 0 20px;
   margin: 4em auto;
   max-width: 960px;
 }
@@ -105,8 +107,9 @@ button {
   border-width: 3px;
   border-style: solid;
   border-radius: 6px;
-  padding: 8px 14px;
   cursor: pointer;
+  height: 48px;
+  width: 48px;
 }
 
 input[type="text"],
@@ -142,10 +145,6 @@ input[type="number"] {
   clear: both;
 }
 
-#chore-list,
-form {
-  margin: 0 16px;
-}
 
 #new-chore-form {
   display: flex;
@@ -157,6 +156,10 @@ form {
 #new-chore-form input {
   flex: 1;
   margin-right: 8px;
+}
+
+#new-chore-forum button {
+  flex: 0 0 auto;
 }
 
 #frog-say {

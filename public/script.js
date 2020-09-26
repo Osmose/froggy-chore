@@ -288,10 +288,10 @@ function ListView() {
           <span class="name">${chore.name}</span>
           <span class="status">${choreStatus(chore)}</span>
           <button class="complete" type="button" onClick=${() => handleClickDone(chore)}>
-            ✓
+            ✔
           </button>
           <button class="delete" type="button" onClick=${() => handleClickDelete(chore)}>
-            ✗
+            ✖
           </button>
         </li>
       `)}

@@ -34,6 +34,8 @@ h1 {
 #chore-list {
   list-style-type: none;
   padding-left: 0;
+  display: grid;
+  grid-auto-rows: 1fr;
 }
 
 .chore-list-item {
@@ -41,7 +43,7 @@ h1 {
   flex-direction: row;
   margin-bottom: 8px;
   line-height: 32px;
-  padding: 4px;
+  padding: 6px 8px;
   border-radius: 6px;
   align-items: center;
 }
@@ -62,6 +64,7 @@ h1 {
 .chore-list-item button {
   flex: 0 0 auto;
   margin-left: 8px;
+  height: 100%;
 }
 
 button.complete,
@@ -103,7 +106,7 @@ button {
   border-width: 3px;
   border-style: solid;
   border-radius: 6px;
-  padding: 2px 4px;
+  padding: 5px 7px 0px;
   cursor: pointer;
 }
 

@@ -278,6 +278,10 @@ function ListView() {
     setQuote(randomChoice(REMOVE_CHORE_QUOTES));
   }
   
+  async function handleClickPostpone(chore) {
+    const 
+  }
+  
   const sortedChores = [...chores];
   sortedChores.sort((a, b) => choreTimeUntilDue(a) - choreTimeUntilDue(b));
   
@@ -289,6 +293,9 @@ function ListView() {
           <span class="status">${choreStatus(chore)}</span>
           <button class="complete" type="button" onClick=${() => handleClickDone(chore)}>
             ✔
+          </button>
+          <button class="postpone" type="button" onClick=${() => handleClickPostpone(chore)}>
+            +
           </button>
           <button class="delete" type="button" onClick=${() => handleClickDelete(chore)}>
             ✖

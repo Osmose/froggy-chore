@@ -98,6 +98,21 @@ button.delete:active {
   background: #833100;
 }
 
+button.postpone {
+  color: #0163c6;
+  border-color: #0163c6;
+  background: #64a5ff;
+  font-size: 120%;
+  padding-top: 4px;
+  padding-left: 10px;
+}
+
+button.postpone:active {
+  color: #64a5ff;
+  border-color: #64a5ff;
+  background: #0163c6;
+}
+
 button.create-list {
   margin: 35px auto;
   display: block;

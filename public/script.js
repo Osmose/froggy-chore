@@ -30,6 +30,13 @@ const REMOVE_CHORE_QUOTES = [
   "Get outta here"
 ];
 
+const POSTPONE_CHORE_QUOTES = [
+  'Mission failed, we\'ll get em next time',
+  'Improvise. Adapt. Overcome.',
+  'What do we say to the god of death?',
+  'NANI?!'
+];
+
 const levelUpAudio = document.querySelector('#dqlevelup');
 function playLevelUp() {
   levelUpAudio.play();
@@ -171,6 +178,32 @@ function makeChores() {
       setChores(newChores);
       playLevelUp();
     },
+    
+    async postpone(name) {
+      const newChores = chores.map(chore => {
+        if (chore.name !== name) {
+          return chore;
+        }
+        
+        const timeUntilDue = choreTimeUntilDue(chore);
+        let newLastDone = new Date(chore.lastDone.getTime());
+        if (timeUntilDue < 0) {
+          const now = new Date();
+          const dayMs = 24 * 60 * 60 * 1000;
+          const delayMs = chore.delay * dayMs;
+          newLastDone = now.getTime() - delayMs
+          newLastDone.setDate(new.getDate())
+        } else {
+          newLastDone.setDate(newLastDone.getDate() - 1);
+        }
+        return {
+          ...chore,
+          lastDone: new Date(),
+        };
+      });
+      await api.postList(listId, newChores);
+      setChores(newChores);
+    }
   };
 }
 
@@ -249,7 +282,7 @@ function AddChoreForm({ setQuote }) {
 }
 
 function ListView() {
-  const { chores, complete, remove, created } = useChores();
+  const { chores, complete, remove, created, postpone } = useChores();
   const [quote, setQuote] = useState(html`
     ${created ? html`
       Bookmark this page! If you lose the URL you won't be able to get back to it! Anyone with the URL can view and edit it.
@@ -279,7 +312,8 @@ function ListView() {
   }
   
   async function handleClickPostpone(chore) {
-    const 
+    await postpone(chore.name);
+    setQuote(randomChoice(POSTPONE_CHORE_QUOTES));
   }
   
   const sortedChores = [...chores];

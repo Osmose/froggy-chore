@@ -58,6 +58,7 @@ function choreTimeUntilDue(chore) {
 function choreStatus(chore) {
   const now = new Date();
   const choreLastDone = new Date(chore.lastDone);
+  choreLastDone.setHours(0, 0, 0, 0);
 
   const diff = now - choreLastDone;
   const delayMs = chore.delay * 24 * 60 * 60 * 1000;

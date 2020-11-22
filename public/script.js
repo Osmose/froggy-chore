@@ -209,6 +209,7 @@ function makeChores() {
       });
       await api.postList(listId, newChores);
       setChores(newChores);
+      playInn();
     }
   };
 }

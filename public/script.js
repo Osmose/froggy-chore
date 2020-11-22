@@ -42,6 +42,11 @@ function playLevelUp() {
   levelUpAudio.play();
 }
 
+const innAudio = document.querySelector('#ff7inn');
+function playInn() {
+  innAudio.play();
+}
+
 function randomChoice(list) {
   return list[Math.floor(Math.random() * list.length)];
 }

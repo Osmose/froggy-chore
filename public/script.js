@@ -336,7 +336,7 @@ function ListView() {
         `)}
       </ul>
     ` : html`
-      <${DialogBox}>You're all caught up!<//>
+      <${DialogBox}>You're all caught up, nice work! Time to relax.<//>
     `}
     ${upcomingChores.length > 0 && html`
       <h2>Upcoming</h2>
@@ -384,8 +384,8 @@ function App() {
   return html`
     <${ChoreContext.Provider} value=${choreInteractor}>
       <h1 class="header">
-        <a href="/">Froggy Chore</a>
         <img class="froggy-rotated" src="https://cdn.glitch.com/59c2bae2-f034-4836-ac6d-553a16963ad6%2Ffroggy-chore-rotated.png?v=1606669566496" />
+        <a href="/">Froggy Chore</a>
       </h1>
       ${!listId ? html`
         <${Welcome} />

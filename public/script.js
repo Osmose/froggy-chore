@@ -60,7 +60,7 @@ function choreTimeUntilDue(chore) {
   return delayMs - diff;
 }
 
-function choreStatus(chore) {
+function choreDueDays(chore) {
   const now = new Date();
   const choreLastDone = new Date(chore.lastDone);
   choreLastDone.setHours(0, 0, 0, 0);
@@ -68,10 +68,18 @@ function choreStatus(chore) {
   const diff = now - choreLastDone;
   const delayMs = chore.delay * 24 * 60 * 60 * 1000;
   if (diff >= delayMs) {
+    return 0;
+  } else {
+    return Math.ceil((delayMs - diff) / 24 / 60 / 60 / 1000);
+  }
+}
+
+function choreStatus(chore) {    
+  const dueDays = choreDueDays(chore);
+  if (dueDays < 1) {
     return "Due today";
   } else {
-    const dayDiff = Math.ceil((delayMs - diff) / 24 / 60 / 60 / 1000);
-    return `Due in ${dayDiff} days`;
+    return `Due in ${dueDays} days`;
   }
 }
 
@@ -290,17 +298,6 @@ function AddChoreForm({ setQuote }) {
 
 function ListView() {
   const { chores, complete, remove, created, postpone } = useChores();
-  const [quote, setQuote] = useState(html`
-    ${created ? html`
-      Bookmark this page! If you lose the URL you won't be able to get back to it! Anyone with the URL can view and edit it.
-    ` : html`
-      I can help you remember when to do your chores! 
-    `}
-    <br /><br />
-    Fill out the fields and click add to add a chore. 
-    Click DONE when you've performed the chore and I'll tell you how long until it's due again. 
-    Click the X to remove a chore.
-  `);
 
   if (chores === undefined) {
     return html`<div class="message">Loading...</div>`;
@@ -310,44 +307,62 @@ function ListView() {
 
   async function handleClickDone(chore) {
     await complete(chore.name);
-    setQuote(randomChoice(DO_CHORE_QUOTES));
   }
 
   async function handleClickDelete(chore) {
     await remove(chore.name);
-    setQuote(randomChoice(REMOVE_CHORE_QUOTES));
   }
   
   async function handleClickPostpone(chore) {
     await postpone(chore.name);
-    setQuote(randomChoice(POSTPONE_CHORE_QUOTES));
   }
   
   const sortedChores = [...chores];
   sortedChores.sort((a, b) => choreTimeUntilDue(a) - choreTimeUntilDue(b));
   
+  const dueChores = sortedChores.filter(chore => choreDueDays(chore) < 1);
+  const upcomingChores = sortedChores.filter(chore => choreDueDays(chore) >= 1);
+  
   return html`
+    ${created && html`
+      <${DialogBox}>
+        Bookmark this page! If you lose the URL you won't be able to get back to it! Anyone with the URL can view and edit it.
+      <//>
+    `}
+    ${dueChores.length > 0 ? html`
+      <h2>Due</h2>
+      
+    ` : html`
+    
+    `}
+    <h2>Upcoming</h2>
     <ul id="chore-list">
       ${sortedChores.map(chore => html`
-        <li class="chore-list-item" key=${chore.name}>
-          <span class="name">${chore.name}</span>
-          <span class="status">${choreStatus(chore)}</span>
-          <button class="complete" type="button" onClick=${() => handleClickDone(chore)}>
-            ✔
-          </button>
-          <button class="postpone" type="button" onClick=${() => handleClickPostpone(chore)}>
-            +
-          </button>
-          <button class="delete" type="button" onClick=${() => handleClickDelete(chore)}>
-            ✖
-          </button>
-        </li>
+        
       `)}
     </ul>
     <${AddChoreForm} setQuote=${setQuote} />
     <${DialogBox}>
       ${quote}
     <//>
+  `;
+}
+
+function ChoreListItem({ chore }) {
+  return html`
+    <li class="chore-list-item" key=${chore.name}>
+      <span class="name">${chore.name}</span>
+      <span class="status">${choreStatus(chore)}</span>
+      <button class="complete" type="button" onClick=${() => handleClickDone(chore)}>
+        ✔
+      </button>
+      <button class="postpone" type="button" onClick=${() => handleClickPostpone(chore)}>
+        +
+      </button>
+      <button class="delete" type="button" onClick=${() => handleClickDelete(chore)}>
+        ✖
+      </button>
+    </li>
   `;
 }
 

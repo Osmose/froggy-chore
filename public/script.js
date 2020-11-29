@@ -258,7 +258,7 @@ function Welcome() {
   `;
 }
 
-function AddChoreForm({ setQuote }) {
+function AddChoreForm() {
   const { add } = useChores();
   const [name, setName] = useState();
   const [delay, setDelay] = useState();
@@ -269,7 +269,6 @@ function AddChoreForm({ setQuote }) {
     await add(name, delay);
     setName('');
     setDelay('');
-    setQuote(randomChoice(ADD_CHORE_QUOTES));
   }
 
   return html`
@@ -298,13 +297,7 @@ function AddChoreForm({ setQuote }) {
 
 function ListView() {
   const { chores, complete, remove, created, postpone } = useChores();
-
-  if (chores === undefined) {
-    return html`<div class="message">Loading...</div>`;
-  } else if (chores === null) {
-    return html`<div class="message">List not found.</div>`;
-  }
-
+  
   async function handleClickDone(chore) {
     await complete(chore.name);
   }
@@ -315,6 +308,12 @@ function ListView() {
   
   async function handleClickPostpone(chore) {
     await postpone(chore.name);
+  }
+
+  if (chores === undefined) {
+    return html`<div class="message">Loading...</div>`;
+  } else if (chores === null) {
+    return html`<div class="message">List not found.</div>`;
   }
   
   const sortedChores = [...chores];
@@ -331,35 +330,40 @@ function ListView() {
     `}
     ${dueChores.length > 0 ? html`
       <h2>Due</h2>
-      
+      <ul class="chore-list">
+        ${dueChores.map(chore => html`
+          <${ChoreListItem} chore=${chore} onClickDone=${handleClickDone} onClickDelete=${handleClickDelete} onClickPostpone=${handleClickPostpone} />
+        `)}
+      </ul>
     ` : html`
-    
+      <${DialogBox}>You're all caught up!<//>
     `}
-    <h2>Upcoming</h2>
-    <ul id="chore-list">
-      ${sortedChores.map(chore => html`
-        
-      `)}
-    </ul>
-    <${AddChoreForm} setQuote=${setQuote} />
-    <${DialogBox}>
-      ${quote}
-    <//>
+    ${upcomingChores.length > 0 && html`
+      <h2>Upcoming</h2>
+      <ul class="chore-list">
+        ${upcomingChores.map(chore => html`
+          <${ChoreListItem} chore=${chore} onClickDone=${handleClickDone} onClickDelete=${handleClickDelete} onClickPostpone=${handleClickPostpone} />
+        `)}
+      </ul>
+    `}
+    <${AddChoreForm} />
   `;
 }
 
-function ChoreListItem({ chore }) {
+function ChoreListItem({ chore, onClickDone, onClickDelete, onClickPostpone }) {
   return html`
     <li class="chore-list-item" key=${chore.name}>
       <span class="name">${chore.name}</span>
-      <span class="status">${choreStatus(chore)}</span>
-      <button class="complete" type="button" onClick=${() => handleClickDone(chore)}>
+      ${choreDueDays(chore) > 0 && html`
+        <span class="status">${choreStatus(chore)}</span>
+      `}
+      <button class="complete" type="button" onClick=${() => onClickDone(chore)}>
         ✔
       </button>
-      <button class="postpone" type="button" onClick=${() => handleClickPostpone(chore)}>
+      <button class="postpone" type="button" onClick=${() => onClickPostpone(chore)}>
         +
       </button>
-      <button class="delete" type="button" onClick=${() => handleClickDelete(chore)}>
+      <button class="delete" type="button" onClick=${() => onClickDelete(chore)}>
         ✖
       </button>
     </li>

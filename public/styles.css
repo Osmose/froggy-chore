@@ -33,7 +33,16 @@ h1 {
   text-align: center;
 }
 
-#chore-list {
+h2 {
+  text-align: center;
+}
+
+.caught-up {
+  text-align: center;
+  margin: 2em 0;
+}
+
+.chore-list {
   list-style-type: none;
   padding-left: 0;
   display: grid;

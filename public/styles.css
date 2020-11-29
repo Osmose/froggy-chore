@@ -28,6 +28,20 @@ a {
   color: #7d4900;
 }
 
+.header {
+  position: relative;
+  margin: 0 auto;
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: left;
+}
+
+.froggy-rotated {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
 h1 {
   font-size: 56px;
   text-align: center;

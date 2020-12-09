@@ -208,7 +208,8 @@ function makeChores() {
           const delayMs = chore.delay * dayMs;
           newLastDone = new Date(now.getTime() - delayMs + dayMs);
         } else {
-          newLastDone = new Date(chore.lastDone.getTime() + dayMs);
+          const oldLastDone = new Date(chore.lastDone);
+          newLastDone = new Date(oldLastDone.getTime() + dayMs);
         }
         return {
           ...chore,

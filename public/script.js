@@ -47,6 +47,11 @@ function playInn() {
   innAudio.play();
 }
 
+const dutyCompleteAudio = document.querySelector('#dutycomplete');
+function playDutyComplete() {
+  dutyCompleteAudio.play();
+}
+
 function randomChoice(list) {
   return list[Math.floor(Math.random() * list.length)];
 }
@@ -190,7 +195,13 @@ function makeChores() {
       });
       await api.postList(listId, newChores);
       setChores(newChores);
-      playLevelUp();
+      
+      const areChoresDue = newChores.some(chore => choreDueDays(chore) < 1)
+      if (areChoresDue) {
+        playLevelUp();
+      } else {
+        playDutyComplete();
+      }
     },
     
     async postpone(name) {

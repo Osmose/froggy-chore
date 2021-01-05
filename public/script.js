@@ -79,6 +79,12 @@ function choreDueDays(chore) {
   }
 }
 
+function choreDoneToday(chore) {
+  const today = new Date();
+  const choreLastDone = new Date(chore.lastDone);
+  return choreLastDone.setHours(0,0,0,0) === today.setHours(0,0,0,0);
+}
+
 function choreStatus(chore) {    
   const dueDays = choreDueDays(chore);
   if (dueDays < 1) {
@@ -365,7 +371,12 @@ function ListView() {
 function ChoreListItem({ chore, onClickDone, onClickDelete, onClickPostpone }) {
   return html`
     <li class="chore-list-item" key=${chore.name}>
-      <span class="name">${chore.name}</span>
+      <span class="name">
+        ${choreDoneToday(chore) && html`
+          <img src="https://cdn.glitch.com/59c2bae2-f034-4836-ac6d-553a16963ad6%2Ffroggy-favicon.png?v=1579413854880" class="done-today" />
+        `}
+        ${chore.name}
+      </span>
       ${choreDueDays(chore) > 0 && html`
         <span class="status">${choreStatus(chore)}</span>
       `}

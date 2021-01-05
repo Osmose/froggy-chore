@@ -194,3 +194,8 @@ input[type="number"] {
 #frog-say {
   margin: 8px 4px;
 }
+
+.done-today {
+  vertical-align: middle;
+  margin-right: 10px;
+}

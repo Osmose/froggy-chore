@@ -196,6 +196,6 @@ input[type="number"] {
 }
 
 .done-today {
-  vertical-align: middle;
+  vertical-align: text-bottom;
   margin-right: 10px;
 }

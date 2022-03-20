@@ -4,12 +4,14 @@
   "description": "A simple Node app with SQLite as a database management system, instantly up and running.",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js"
+    "start": "node server.js",
+    "prestart": "tsc"
   },
   "dependencies": {
     "express": "^4.17.1",
     "sqlite3": "^4.1.1",
-    "body-parser": "^1.19.0"
+    "body-parser": "^1.19.0",
+    "typescript": "^4.5.5"
   },
   "engines": {
     "node": "12.x"

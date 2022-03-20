@@ -37,17 +37,17 @@ const POSTPONE_CHORE_QUOTES = [
   'NANI?!'
 ];
 
-const levelUpAudio = document.querySelector('#dqlevelup') as HTMLAudioElement;
+const levelUpAudio = document.querySelector('#dqlevelup');
 function playLevelUp() {
   levelUpAudio.play();
 }
 
-const innAudio = document.querySelector('#ff7inn') as HTMLAudioElement;
+const innAudio = document.querySelector('#ff7inn');
 function playInn() {
   innAudio.play();
 }
 
-const dutyCompleteAudio = document.querySelector('#dutycomplete') as HTMLAudioElement;
+const dutyCompleteAudio = document.querySelector('#dutycomplete');
 function playDutyComplete() {
   dutyCompleteAudio.play();
 }
@@ -138,12 +138,6 @@ const api = {
     return this.post(`/api/list/${listId}`, { json: JSON.stringify(list) });
   }
 };
-
-interface Chore {
-  name: string;
-  delay: number; // Delay after completing in days
-  lastDone: Date | null;
-}
 
 const ChoreContext = createContext({});
 

@@ -321,7 +321,8 @@ function ListView() {
   sortedChores.sort((a, b) => choreTimeUntilDue(a) - choreTimeUntilDue(b));
 
   const dueChores = sortedChores.filter((chore) => choreDueDays(chore) < 1);
-  const upcomingChores = sortedChores.filter((chore) => choreDueDays(chore) >= 1);
+  const doneTodayChores = sortedChores.filter((chore) => choreDoneToday(chore));
+  const upcomingChores = sortedChores.filter((chore) => !choreDoneToday(chore) && choreDueDays(chore) >= 1);
 
   return html`
     ${created &&
@@ -348,6 +349,21 @@ function ListView() {
           </ul>
         `
       : html` <${DialogBox}>You're all caught up, nice work! Time to relax.<//> `}
+    ${doneTodayChores.length > 0 &&
+    html`
+      <h2>Completed</h2>
+      <ul class="chore-list">
+        ${doneTodayChores.map(
+          (chore) => html`
+            <${ChoreListItem}
+              chore=${chore}
+              onClickDelete=${handleClickDelete}
+              onClickPostpone=${handleClickPostpone}
+            />
+          `
+        )}
+      </ul>
+    `}
     ${upcomingChores.length > 0 &&
     html`
       <h2>Upcoming</h2>
@@ -382,9 +398,10 @@ function ChoreListItem({ chore, onClickDone, onClickDelete, onClickPostpone }) {
         ${chore.name}
       </span>
       ${choreDueDays(chore) > 0 && html` <span class="status">${choreStatus(chore)}</span> `}
-      <button class="complete" type="button" onClick=${() => onClickDone(chore)}>✔</button>
-      <button class="postpone" type="button" onClick=${() => onClickPostpone(chore)}>+</button>
-      <button class="delete" type="button" onClick=${() => onClickDelete(chore)}>✖</button>
+      ${onClickDone && html`<button class="complete" type="button" onClick=${() => onClickDone(chore)}>✔</button>`}
+      ${onClickPostpone &&
+      html`<button class="postpone" type="button" onClick=${() => onClickPostpone(chore)}>+</button>`}
+      ${onClickDelete && html`<button class="delete" type="button" onClick=${() => onClickDelete(chore)}>✖</button>`}
     </li>
   `;
 }

@@ -1,11 +1,8 @@
 import './styles.css';
 
-import htm from 'htm';
-import { h, render, createContext } from 'preact';
-import { useContext, useState, useEffect } from 'preact/hooks';
+import React from 'react';
+import { createRoot } from 'react-dom/client';
 import { v4 as uuidv4 } from 'uuid';
-
-const html = htm.bind(h);
 
 const levelUpAudio: HTMLAudioElement = document.querySelector('#dqlevelup')!;
 function playLevelUp() {
@@ -151,13 +148,13 @@ class NullChoreInteractor implements ChoreInteractor {
   async postpone() {}
 }
 
-const ChoreContext = createContext<ChoreInteractor>(new NullChoreInteractor());
+const ChoreContext = React.createContext<ChoreInteractor>(new NullChoreInteractor());
 
 function makeChores(): ChoreInteractor {
-  const [chores, setChores] = useState<Chore[] | null>(null);
-  const [listId, setListId] = useState<string | null>(null);
-  const [version, setVersion] = useState<number | null>(null);
-  const [created, setCreated] = useState<boolean>(false);
+  const [chores, setChores] = React.useState<Chore[] | null>(null);
+  const [listId, setListId] = React.useState<string | null>(null);
+  const [version, setVersion] = React.useState<number | null>(null);
+  const [created, setCreated] = React.useState<boolean>(false);
 
   return {
     chores,
@@ -277,20 +274,20 @@ function makeChores(): ChoreInteractor {
 }
 
 function useChores(): ChoreInteractor {
-  return useContext(ChoreContext);
+  return React.useContext(ChoreContext);
 }
 
 function DialogBox({ children }) {
-  return html`
-    <div class="box-border dialog-box">
-      <div class="portrait">
+  return (
+    <div className="box-border dialog-box">
+      <div className="portrait">
         <img src="https://cdn.glitch.com/59c2bae2-f034-4836-ac6d-553a16963ad6%2Ffrog-portrait.png?v=1579411082193" />
       </div>
-      <div class="speech">
-        <p id="frog-say">${children}</p>
+      <div className="speech">
+        <p id="frog-say">{children}</p>
       </div>
     </div>
-  `;
+  );
 }
 
 function Welcome() {
@@ -300,20 +297,25 @@ function Welcome() {
     create();
   }
 
-  return html`
-    <button class="create-list" onClick=${handleClickCreate}>Create chore list</button>
-    <${DialogBox}>
-      I can help you remember when to do your chores!
-      <br /><br />
-      Click the button above to create a new list of chores.
-    <//>
-  `;
+  return (
+    <>
+      <button className="create-list" onClick={handleClickCreate}>
+        Create chore list
+      </button>
+      <DialogBox>
+        I can help you remember when to do your chores!
+        <br />
+        <br />
+        Click the button above to create a new list of chores.
+      </DialogBox>
+    </>
+  );
 }
 
 function AddChoreForm() {
   const { add } = useChores();
-  const [name, setName] = useState('');
-  const [delay, setDelay] = useState('');
+  const [name, setName] = React.useState('');
+  const [delay, setDelay] = React.useState('');
 
   async function handleSubmit(event) {
     event.preventDefault();
@@ -327,47 +329,49 @@ function AddChoreForm() {
     setDelay('');
   }
 
-  return html`
-    <form id="new-chore-form" onSubmit=${handleSubmit}>
+  return (
+    <form id="new-chore-form" onSubmit={handleSubmit}>
       <input
         type="text"
         name="name"
         placeholder="Chore name"
         required
-        value=${name}
-        onInput=${(e) => setName(e.target.value)}
+        value={name}
+        onInput={(e) => setName((e.target as HTMLInputElement).value)}
       />
       <input
         type="number"
         name="delay"
         placeholder="Days until due again"
-        value=${delay}
-        onInput=${(e) => setDelay(e.target.value)}
+        value={delay}
+        onInput={(e) => setDelay((e.target as HTMLInputElement).value)}
       />
-      <button type="submit" class="add">Add</button>
+      <button type="submit" className="add">
+        Add
+      </button>
     </form>
-  `;
+  );
 }
 
 function ListView() {
   const { chores, complete, remove, created, postpone } = useChores();
 
-  async function handleClickDone(chore) {
+  async function handleClickDone(chore: Chore) {
     await complete(chore.name);
   }
 
-  async function handleClickDelete(chore) {
+  async function handleClickDelete(chore: Chore) {
     await remove(chore.name);
   }
 
-  async function handleClickPostpone(chore) {
+  async function handleClickPostpone(chore: Chore) {
     await postpone(chore.name);
   }
 
   if (chores === undefined) {
-    return html`<div class="message">Loading...</div>`;
+    return <div className="message">Loading...</div>;
   } else if (chores === null) {
-    return html`<div class="message">List not found.</div>`;
+    return <div className="message">List not found.</div>;
   }
 
   const sortedChores = [...chores];
@@ -377,86 +381,98 @@ function ListView() {
   const doneTodayChores = sortedChores.filter((chore) => choreDoneToday(chore));
   const upcomingChores = sortedChores.filter((chore) => !choreDoneToday(chore) && choreDueDays(chore) >= 1);
 
-  return html`
-    ${created &&
-    html`
-      <${DialogBox}>
-        Bookmark this page! If you lose the URL you won't be able to get back to it! Anyone with the URL can view and
-        edit it.
-      <//>
-    `}
-    ${dueChores.length > 0
-      ? html`
+  return (
+    <>
+      {created && (
+        <DialogBox>
+          Bookmark this page! If you lose the URL you won't be able to get back to it! Anyone with the URL can view and
+          edit it.
+        </DialogBox>
+      )}
+      {dueChores.length > 0 ? (
+        <>
           <h2>Due</h2>
-          <ul class="chore-list">
-            ${dueChores.map(
-              (chore) => html`
-                <${ChoreListItem}
-                  chore=${chore}
-                  onClickDone=${handleClickDone}
-                  onClickDelete=${handleClickDelete}
-                  onClickPostpone=${handleClickPostpone}
-                />
-              `
-            )}
+          <ul className="chore-list">
+            {dueChores.map((chore) => (
+              <ChoreListItem
+                chore={chore}
+                onClickDone={handleClickDone}
+                onClickDelete={handleClickDelete}
+                onClickPostpone={handleClickPostpone}
+              />
+            ))}
           </ul>
-        `
-      : html` <${DialogBox}>You're all caught up, nice work! Time to relax.<//> `}
-    ${doneTodayChores.length > 0 &&
-    html`
-      <h2>Completed</h2>
-      <ul class="chore-list">
-        ${doneTodayChores.map(
-          (chore) => html`
-            <${ChoreListItem}
-              chore=${chore}
-              onClickDelete=${handleClickDelete}
-              onClickPostpone=${handleClickPostpone}
-            />
-          `
-        )}
-      </ul>
-    `}
-    ${upcomingChores.length > 0 &&
-    html`
-      <h2>Upcoming</h2>
-      <ul class="chore-list">
-        ${upcomingChores.map(
-          (chore) => html`
-            <${ChoreListItem}
-              chore=${chore}
-              onClickDone=${handleClickDone}
-              onClickDelete=${handleClickDelete}
-              onClickPostpone=${handleClickPostpone}
-            />
-          `
-        )}
-      </ul>
-    `}
-    <${AddChoreForm} />
-  `;
+        </>
+      ) : (
+        <DialogBox>You're all caught up, nice work! Time to relax.</DialogBox>
+      )}
+      {doneTodayChores.length > 0 && (
+        <>
+          <h2>Completed</h2>
+          <ul className="chore-list">
+            {doneTodayChores.map((chore) => (
+              <ChoreListItem chore={chore} onClickDelete={handleClickDelete} onClickPostpone={handleClickPostpone} />
+            ))}
+          </ul>
+        </>
+      )}
+      {upcomingChores.length > 0 && (
+        <>
+          <h2>Upcoming</h2>
+          <ul className="chore-list">
+            {upcomingChores.map((chore) => (
+              <ChoreListItem
+                chore={chore}
+                onClickDone={handleClickDone}
+                onClickDelete={handleClickDelete}
+                onClickPostpone={handleClickPostpone}
+              />
+            ))}
+          </ul>
+        </>
+      )}
+      <AddChoreForm />
+    </>
+  );
 }
 
-function ChoreListItem({ chore, onClickDone, onClickDelete, onClickPostpone }) {
-  return html`
-    <li class="chore-list-item" key=${chore.name}>
-      <span class="name">
-        ${choreDoneToday(chore) &&
-        html`
+interface ChoreListItemProps {
+  chore: Chore;
+  onClickDone?: (chore: Chore) => void;
+  onClickDelete?: (chore: Chore) => void;
+  onClickPostpone?: (chore: Chore) => void;
+}
+
+function ChoreListItem({ chore, onClickDone, onClickDelete, onClickPostpone }: ChoreListItemProps) {
+  return (
+    <li className="chore-list-item" key={chore.name}>
+      <span className="name">
+        {choreDoneToday(chore) && (
           <img
             src="https://cdn.glitch.com/59c2bae2-f034-4836-ac6d-553a16963ad6%2Ffroggy-favicon.png?v=1579413854880"
-            class="done-today"
+            className="done-today"
           />
-        `}
-        ${chore.name}
+        )}
+        {chore.name}
       </span>
-      ${choreDueDays(chore) > 0 && html` <span class="status">${choreStatus(chore)}</span> `}
-      ${onClickDone && html`<button class="complete" type="button" onClick=${() => onClickDone(chore)}>✔</button>`}
-      ${onClickPostpone &&
-      html`<button class="postpone" type="button" onClick=${() => onClickPostpone(chore)}>+</button>`}
-      ${onClickDelete && html`<button class="delete" type="button" onClick=${() => onClickDelete(chore)}>✖</button>`}
+      {choreDueDays(chore) > 0 && <span className="status">{choreStatus(chore)}</span>}
+      {onClickDone && (
+        <button className="complete" type="button" onClick={() => onClickDone(chore)}>
+          ✔
+        </button>
+      )}
+      {onClickPostpone && (
+        <button className="postpone" type="button" onClick={() => onClickPostpone(chore)}>
+          +
+        </button>
+      )}
+      {onClickDelete && (
+        <button className="delete" type="button" onClick={() => onClickDelete(chore)}>
+          ✖
+        </button>
+      )}
     </li>
-  `;
+  );
 }
 
 function App() {
@@ -464,25 +480,26 @@ function App() {
   const listId = url.searchParams.get('listId');
   const choreInteractor = makeChores();
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (listId) {
       choreInteractor.load(listId);
     }
   }, []);
 
-  return html`
-    <${ChoreContext.Provider} value=${choreInteractor}>
-      <h1 class="header">
+  return (
+    <ChoreContext.Provider value={choreInteractor}>
+      <h1 className="header">
         <img
-          class="froggy-rotated"
+          className="froggy-rotated"
           src="https://cdn.glitch.com/59c2bae2-f034-4836-ac6d-553a16963ad6%2Ffroggy-chore-rotated.png?v=1606669566496"
         />
         <a href="/">Froggy Chore</a>
       </h1>
-      ${!listId ? html` <${Welcome} /> ` : html` <${ListView} /> `}
-    <//>
-  `;
+      {!listId ? <Welcome /> : <ListView />}
+    </ChoreContext.Provider>
+  );
 }
 
 // Kickoff!
-render(html` <${App} /> `, document.getElementById('container')!);
+const root = createRoot(document.getElementById('container'));
+root.render(<App />);

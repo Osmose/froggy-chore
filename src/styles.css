@@ -69,10 +69,15 @@ h2 {
 }
 
 .chore-list-item .name {
-  flex: 1;
+  flex: 2;
 }
 
 .chore-list-item .status {
+  flex: 1;
+  margin-left: 8px;
+}
+
+.chore-list-item .assignee {
   flex: 1;
   margin-left: 8px;
 }
@@ -82,6 +87,14 @@ h2 {
   margin-left: 8px;
   height: 48px;
   width: 48px;
+}
+
+.chore-list-item button.inline {
+  height: 32px;
+  width: 32px;
+  font-size: 22px;
+  padding: 0;
+  line-height: 28px;
 }
 
 button.complete,
@@ -112,7 +125,8 @@ button.delete:active {
   background: #833100;
 }
 
-button.postpone {
+button.postpone,
+button.edit {
   color: #0163c6;
   border-color: #0163c6;
   background: #64a5ff;
@@ -121,7 +135,8 @@ button.postpone {
   padding-left: 10px;
 }
 
-button.postpone:active {
+button.postpone:active,
+button.edit:active {
   color: #64a5ff;
   border-color: #64a5ff;
   background: #0163c6;
@@ -142,7 +157,9 @@ button {
 }
 
 input[type="text"],
-input[type="number"] {
+input[type="number"],
+select {
+  background: white;
   border: 3px solid #000;
   border-radius: 6px;
   font-size: inherit;

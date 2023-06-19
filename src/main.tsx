@@ -23,6 +23,7 @@ interface Chore {
   name: string;
   lastDone?: Date;
   delay: number;
+  assignee: string | null;
 }
 
 function choreTimeUntilDue(chore: Chore) {
@@ -130,10 +131,11 @@ interface ChoreInteractor {
 
   load(listId: string): Promise<void>;
   create(): Promise<void>;
-  add(name: string, delay: number): Promise<void>;
+  add(name: string, delay: number, assignee?: string): Promise<void>;
   remove(name: string): Promise<void>;
   complete(name: string): Promise<void>;
   postpone(name: string): Promise<void>;
+  assign(name: string, assignee: string | null): Promise<void>;
 }
 
 class NullChoreInteractor implements ChoreInteractor {
@@ -146,6 +148,7 @@ class NullChoreInteractor implements ChoreInteractor {
   async remove() {}
   async complete() {}
   async postpone() {}
+  async assign() {}
 }
 
 const ChoreContext = React.createContext<ChoreInteractor>(new NullChoreInteractor());
@@ -187,12 +190,12 @@ function makeChores(): ChoreInteractor {
       history.pushState(null, '', `?listId=${listId}`);
     },
 
-    async add(name, delay) {
+    async add(name, delay, assignee) {
       if (!listId || !chores || version === null) {
         throw new Error('Attempted to add a new chore before loading a list.');
       }
 
-      const chore: Chore = { name, delay, lastDone: undefined };
+      const chore: Chore = { name, delay, lastDone: undefined, assignee: assignee ?? null };
 
       // I know, I'm risking a race condition here but I'm not getting paid for this
       const newChores = [...chores, chore];
@@ -237,6 +240,26 @@ function makeChores(): ChoreInteractor {
       } else {
         playDutyComplete();
       }
+    },
+
+    async assign(name, assignee) {
+      if (!listId || !chores || version === null) {
+        throw new Error('Attempted to postpone a chore before loading a list.');
+      }
+
+      const newChores = chores.map((chore) => {
+        if (chore.name !== name) {
+          return chore;
+        }
+
+        return {
+          ...chore,
+          assignee,
+        };
+      });
+      const { newVersion } = await api.postList(listId, newChores, version);
+      setChores(newChores);
+      setVersion(newVersion);
     },
 
     async postpone(name) {
@@ -316,6 +339,7 @@ function AddChoreForm() {
   const { add } = useChores();
   const [name, setName] = React.useState('');
   const [delay, setDelay] = React.useState('');
+  const [assignee, setAssignee] = React.useState('');
 
   async function handleSubmit(event) {
     event.preventDefault();
@@ -324,9 +348,10 @@ function AddChoreForm() {
       return;
     }
 
-    await add(name, Number.parseInt(delay));
+    await add(name, Number.parseInt(delay), assignee);
     setName('');
     setDelay('');
+    setAssignee('');
   }
 
   return (
@@ -346,6 +371,13 @@ function AddChoreForm() {
         value={delay}
         onInput={(e) => setDelay((e.target as HTMLInputElement).value)}
       />
+      <input
+        type="text"
+        name="assignee"
+        placeholder="Assignee (optional)"
+        value={assignee}
+        onInput={(e) => setAssignee((e.target as HTMLInputElement).value)}
+      />
       <button type="submit" className="add">
         Add
       </button>
@@ -353,8 +385,15 @@ function AddChoreForm() {
   );
 }
 
-function ListView() {
-  const { chores, complete, remove, created, postpone } = useChores();
+interface ListViewProps {
+  listId: string;
+}
+
+function ListView({ listId }: ListViewProps) {
+  const { chores, complete, remove, created, postpone, assign } = useChores();
+  const [assigneeFilter, setAssigneeFilter] = React.useState<string | null>(
+    localStorage.getItem(`assigneeFilter-${listId}`) || null
+  );
 
   async function handleClickDone(chore: Chore) {
     await complete(chore.name);
@@ -368,14 +407,31 @@ function ListView() {
     await postpone(chore.name);
   }
 
+  async function handleClickEditAssignee(chore: Chore) {
+    const newAssignee = window.prompt('Enter new assignee', chore.assignee ?? '');
+    if (newAssignee !== null) {
+      assign(chore.name, newAssignee || null);
+    }
+  }
+
+  function handleChangeAssigneeFilter(event: React.ChangeEvent<HTMLSelectElement>) {
+    const value = event.target.value ?? null;
+    setAssigneeFilter(value);
+    localStorage.setItem(`assigneeFilter-${listId}`, value || '');
+  }
+
   if (chores === undefined) {
     return <div className="message">Loading...</div>;
   } else if (chores === null) {
     return <div className="message">List not found.</div>;
   }
 
-  const sortedChores = [...chores];
-  sortedChores.sort((a, b) => choreTimeUntilDue(a) - choreTimeUntilDue(b));
+  const assignees = Array.from(new Set(chores.map((c) => c.assignee).filter((a) => a))) as string[];
+
+  const filteredChores = assigneeFilter
+    ? chores.filter((chore) => chore.assignee === null || chore.assignee === assigneeFilter)
+    : chores;
+  const sortedChores = [...filteredChores].sort((a, b) => choreTimeUntilDue(a) - choreTimeUntilDue(b));
 
   const dueChores = sortedChores.filter((chore) => choreDueDays(chore) < 1);
   const doneTodayChores = sortedChores.filter((chore) => choreDoneToday(chore));
@@ -389,6 +445,19 @@ function ListView() {
           edit it.
         </DialogBox>
       )}
+      {assignees.length > 1 && (
+        <div className="assigneeFilter">
+          View chores for{' '}
+          <select value={assigneeFilter ?? ''} onChange={handleChangeAssigneeFilter}>
+            <option value="">All</option>
+            {assignees.map((assignee) => (
+              <option value={assignee} key={assignee}>
+                {assignee}
+              </option>
+            ))}
+          </select>
+        </div>
+      )}
       {dueChores.length > 0 ? (
         <>
           <h2>Due</h2>
@@ -399,6 +468,7 @@ function ListView() {
                 onClickDone={handleClickDone}
                 onClickDelete={handleClickDelete}
                 onClickPostpone={handleClickPostpone}
+                onClickEditAssignee={handleClickEditAssignee}
               />
             ))}
           </ul>
@@ -411,7 +481,12 @@ function ListView() {
           <h2>Completed</h2>
           <ul className="chore-list">
             {doneTodayChores.map((chore) => (
-              <ChoreListItem chore={chore} onClickDelete={handleClickDelete} onClickPostpone={handleClickPostpone} />
+              <ChoreListItem
+                chore={chore}
+                onClickDelete={handleClickDelete}
+                onClickPostpone={handleClickPostpone}
+                onClickEditAssignee={handleClickEditAssignee}
+              />
             ))}
           </ul>
         </>
@@ -426,6 +501,7 @@ function ListView() {
                 onClickDone={handleClickDone}
                 onClickDelete={handleClickDelete}
                 onClickPostpone={handleClickPostpone}
+                onClickEditAssignee={handleClickEditAssignee}
               />
             ))}
           </ul>
@@ -441,9 +517,16 @@ interface ChoreListItemProps {
   onClickDone?: (chore: Chore) => void;
   onClickDelete?: (chore: Chore) => void;
   onClickPostpone?: (chore: Chore) => void;
+  onClickEditAssignee?: (chore: Chore) => void;
 }
 
-function ChoreListItem({ chore, onClickDone, onClickDelete, onClickPostpone }: ChoreListItemProps) {
+function ChoreListItem({
+  chore,
+  onClickDone,
+  onClickDelete,
+  onClickPostpone,
+  onClickEditAssignee,
+}: ChoreListItemProps) {
   return (
     <li className="chore-list-item" key={chore.name}>
       <span className="name">
@@ -456,6 +539,14 @@ function ChoreListItem({ chore, onClickDone, onClickDelete, onClickPostpone }: C
         {chore.name}
       </span>
       {choreDueDays(chore) > 0 && <span className="status">{choreStatus(chore)}</span>}
+      <span className="assignee">
+        {chore.assignee || 'anyone'}
+        {onClickEditAssignee && (
+          <button className="edit inline" onClick={() => onClickEditAssignee(chore)}>
+            ✎
+          </button>
+        )}
+      </span>
       {onClickDone && (
         <button className="complete" type="button" onClick={() => onClickDone(chore)}>
           ✔
@@ -495,7 +586,7 @@ function App() {
         />
         <a href="/">Froggy Chore</a>
       </h1>
-      {!listId ? <Welcome /> : <ListView />}
+      {!listId ? <Welcome /> : <ListView listId={listId} />}
     </ChoreContext.Provider>
   );
 }

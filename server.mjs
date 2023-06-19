@@ -3,16 +3,11 @@ import express from 'express';
 import bodyParser from 'body-parser';
 import sqlite3 from 'sqlite3';
 import * as sqlite from 'sqlite';
-import { fileURLToPath } from 'url';
-import { dirname } from 'path';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
+import ViteExpress from 'vite-express';
 
 const app = express();
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
-app.use(express.static('public'));
 
 // Initialize the database.
 const db = await sqlite.open({
@@ -20,11 +15,6 @@ const db = await sqlite.open({
   driver: sqlite3.Database,
 });
 await db.migrate();
-
-// GET /
-app.get('/', (request, response) => {
-  response.sendFile(`${__dirname}/views/index.html`);
-});
 
 // GET /api/list/:listId
 app.get('/api/list/:listId', async (request, response) => {
@@ -61,6 +51,6 @@ app.post('/api/list/:listId', async (request, response) => {
   response.type('application/json').send({ newVersion: version + 1 });
 });
 
-const listener = app.listen(process.env.PORT || 8000, () => {
+const listener = ViteExpress.listen(app, process.env.PORT || 8000, () => {
   console.log(`Your app is listening on port ${listener.address().port}`);
 });

@@ -1,53 +1,56 @@
-/* global htmPreact uuidv4 */
-const { html, render, createContext, useContext, useState, useEffect } = htmPreact;
+import './styles.css';
 
-const ADD_CHORE_QUOTES = ['A small price to pay for Froggy Chore', 'KERO KERO', "You're gonna do great!", 'Good luck!'];
+import htm from 'htm';
+import { h, render, createContext } from 'preact';
+import { useContext, useState, useEffect } from 'preact/hooks';
+import { v4 as uuidv4 } from 'uuid';
 
-const DO_CHORE_QUOTES = ['Awwwwwwwwwww yeahhhhhhhhhh', 'Nice job!', 'お疲れ様です', "Job's done.", '!!!'];
+const html = htm.bind(h);
 
-const REMOVE_CHORE_QUOTES = ['Later gator', 'Who even cared about that chore anyway, jeez', 'YEET', 'Get outta here'];
-
-const POSTPONE_CHORE_QUOTES = [
-  "Mission failed, we'll get em next time",
-  'Improvise. Adapt. Overcome.',
-  'What do we say to the god of death?',
-  'NANI?!',
-];
-
-const levelUpAudio = document.querySelector('#dqlevelup');
+const levelUpAudio: HTMLAudioElement = document.querySelector('#dqlevelup')!;
 function playLevelUp() {
   levelUpAudio.play();
 }
 
-const innAudio = document.querySelector('#ff7inn');
+const innAudio: HTMLAudioElement = document.querySelector('#ff7inn')!;
 function playInn() {
   innAudio.play();
 }
 
-const dutyCompleteAudio = document.querySelector('#dutycomplete');
+const dutyCompleteAudio: HTMLAudioElement = document.querySelector('#dutycomplete')!;
 function playDutyComplete() {
   dutyCompleteAudio.play();
 }
 
-function randomChoice(list) {
-  return list[Math.floor(Math.random() * list.length)];
+interface Chore {
+  name: string;
+  lastDone?: Date;
+  delay: number;
 }
 
-function choreTimeUntilDue(chore) {
+function choreTimeUntilDue(chore: Chore) {
+  if (!chore.lastDone) {
+    return 0;
+  }
+
   const now = new Date();
   const choreLastDone = new Date(chore.lastDone);
 
-  const diff = now - choreLastDone;
+  const diff = now.getTime() - choreLastDone.getTime();
   const delayMs = chore.delay * 24 * 60 * 60 * 1000;
   return delayMs - diff;
 }
 
-function choreDueDays(chore) {
+function choreDueDays(chore: Chore) {
+  if (!chore.lastDone) {
+    return 0;
+  }
+
   const now = new Date();
   const choreLastDone = new Date(chore.lastDone);
   choreLastDone.setHours(0, 0, 0, 0);
 
-  const diff = now - choreLastDone;
+  const diff = now.getTime() - choreLastDone.getTime();
   const delayMs = chore.delay * 24 * 60 * 60 * 1000;
   if (diff >= delayMs) {
     return 0;
@@ -56,13 +59,17 @@ function choreDueDays(chore) {
   }
 }
 
-function choreDoneToday(chore) {
+function choreDoneToday(chore: Chore) {
+  if (!chore.lastDone) {
+    return false;
+  }
+
   const today = new Date();
   const choreLastDone = new Date(chore.lastDone);
   return choreLastDone.setHours(0, 0, 0, 0) === today.setHours(0, 0, 0, 0);
 }
 
-function choreStatus(chore) {
+function choreStatus(chore: Chore) {
   const dueDays = choreDueDays(chore);
   if (dueDays < 1) {
     return 'Due today';
@@ -72,14 +79,16 @@ function choreStatus(chore) {
 }
 
 class APIError extends Error {
-  constructor(status, ...args) {
+  status: number;
+
+  constructor(status, ...args: any[]) {
     super(...args);
     this.status = status;
   }
 }
 
 const api = {
-  async get(url) {
+  async get(url: string) {
     const response = await fetch(url, { method: 'GET' });
     if (response.ok) {
       return response.json();
@@ -88,7 +97,7 @@ const api = {
     }
   },
 
-  async post(url, params) {
+  async post(url: string, params: any) {
     const response = await fetch(url, {
       method: 'POST',
       body: JSON.stringify(params),
@@ -101,11 +110,11 @@ const api = {
     }
   },
 
-  async getList(listId) {
+  async getList(listId: string) {
     return this.get(`/api/list/${listId}`);
   },
 
-  async postList(listId, list, version) {
+  async postList(listId: string, list: Chore[], version: number) {
     try {
       return await this.post(`/api/list/${listId}`, { list, version });
     } catch (err) {
@@ -118,13 +127,37 @@ const api = {
   },
 };
 
-const ChoreContext = createContext({});
+interface ChoreInteractor {
+  chores: Chore[] | null;
+  created: boolean;
 
-function makeChores() {
-  const [chores, setChores] = useState(undefined);
-  const [listId, setListId] = useState(undefined);
-  const [version, setVersion] = useState(undefined);
-  const [created, setCreated] = useState(false);
+  load(listId: string): Promise<void>;
+  create(): Promise<void>;
+  add(name: string, delay: number): Promise<void>;
+  remove(name: string): Promise<void>;
+  complete(name: string): Promise<void>;
+  postpone(name: string): Promise<void>;
+}
+
+class NullChoreInteractor implements ChoreInteractor {
+  chores = [];
+  created = false;
+
+  async load() {}
+  async create() {}
+  async add() {}
+  async remove() {}
+  async complete() {}
+  async postpone() {}
+}
+
+const ChoreContext = createContext<ChoreInteractor>(new NullChoreInteractor());
+
+function makeChores(): ChoreInteractor {
+  const [chores, setChores] = useState<Chore[] | null>(null);
+  const [listId, setListId] = useState<string | null>(null);
+  const [version, setVersion] = useState<number | null>(null);
+  const [created, setCreated] = useState<boolean>(false);
 
   return {
     chores,
@@ -134,7 +167,7 @@ function makeChores() {
       try {
         const { list, version } = await api.getList(listId);
         setChores(list);
-        setVersion(version);
+        setVersion(version ?? 0);
         setListId(listId);
         setCreated(false);
       } catch (err) {
@@ -158,7 +191,11 @@ function makeChores() {
     },
 
     async add(name, delay) {
-      const chore = { name, delay, lastDone: null };
+      if (!listId || !chores || version === null) {
+        throw new Error('Attempted to add a new chore before loading a list.');
+      }
+
+      const chore: Chore = { name, delay, lastDone: undefined };
 
       // I know, I'm risking a race condition here but I'm not getting paid for this
       const newChores = [...chores, chore];
@@ -168,6 +205,10 @@ function makeChores() {
     },
 
     async remove(name) {
+      if (!listId || !chores || version === null) {
+        throw new Error('Attempted to remove a chore before loading a list.');
+      }
+
       const newChores = chores.filter((chore) => chore.name !== name);
       const { newVersion } = await api.postList(listId, newChores, version);
       setChores(newChores);
@@ -175,6 +216,10 @@ function makeChores() {
     },
 
     async complete(name) {
+      if (!listId || !chores || version === null) {
+        throw new Error('Attempted to complete a chore before loading a list.');
+      }
+
       const newChores = chores.map((chore) => {
         if (chore.name !== name) {
           return chore;
@@ -198,6 +243,10 @@ function makeChores() {
     },
 
     async postpone(name) {
+      if (!listId || !chores || version === null) {
+        throw new Error('Attempted to postpone a chore before loading a list.');
+      }
+
       const newChores = chores.map((chore) => {
         if (chore.name !== name) {
           return chore;
@@ -205,13 +254,13 @@ function makeChores() {
 
         const dayMs = 24 * 60 * 60 * 1000;
         const timeUntilDue = choreTimeUntilDue(chore);
-        let newLastDone = null;
-        if (timeUntilDue < 0) {
+        let newLastDone: Date;
+        if (timeUntilDue <= 0) {
           const now = new Date();
           const delayMs = chore.delay * dayMs;
           newLastDone = new Date(now.getTime() - delayMs + dayMs);
         } else {
-          const oldLastDone = new Date(chore.lastDone);
+          const oldLastDone = new Date(chore.lastDone!);
           newLastDone = new Date(oldLastDone.getTime() + dayMs);
         }
         return {
@@ -227,7 +276,7 @@ function makeChores() {
   };
 }
 
-function useChores() {
+function useChores(): ChoreInteractor {
   return useContext(ChoreContext);
 }
 
@@ -263,13 +312,17 @@ function Welcome() {
 
 function AddChoreForm() {
   const { add } = useChores();
-  const [name, setName] = useState();
-  const [delay, setDelay] = useState();
+  const [name, setName] = useState('');
+  const [delay, setDelay] = useState('');
 
   async function handleSubmit(event) {
     event.preventDefault();
 
-    await add(name, delay);
+    if (!name || !delay) {
+      return;
+    }
+
+    await add(name, Number.parseInt(delay));
     setName('');
     setDelay('');
   }
@@ -407,7 +460,7 @@ function ChoreListItem({ chore, onClickDone, onClickDelete, onClickPostpone }) {
 }
 
 function App() {
-  const url = new URL(window.location);
+  const url = new URL(window.location.href);
   const listId = url.searchParams.get('listId');
   const choreInteractor = makeChores();
 
@@ -432,6 +485,4 @@ function App() {
 }
 
 // Kickoff!
-render(html` <${App} /> `, document.getElementById('container'));
-
-window.api = api;
+render(html` <${App} /> `, document.getElementById('container')!);

@@ -429,7 +429,7 @@ function ListView({ listId }: ListViewProps) {
   const assignees = Array.from(new Set(chores.map((c) => c.assignee).filter((a) => a))) as string[];
 
   const filteredChores = assigneeFilter
-    ? chores.filter((chore) => chore.assignee === null || chore.assignee === assigneeFilter)
+    ? chores.filter((chore) => !chore.assignee || chore.assignee === assigneeFilter)
     : chores;
   const sortedChores = [...filteredChores].sort((a, b) => choreTimeUntilDue(a) - choreTimeUntilDue(b));
 

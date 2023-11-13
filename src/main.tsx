@@ -4,6 +4,8 @@ import React from 'react';
 import { createRoot } from 'react-dom/client';
 import { v4 as uuidv4 } from 'uuid';
 
+import usePreferences from './usePreferences';
+
 const levelUpAudio: HTMLAudioElement = document.querySelector('#dqlevelup')!;
 function playLevelUp() {
   levelUpAudio.play();
@@ -335,7 +337,11 @@ function Welcome() {
   );
 }
 
-function AddChoreForm() {
+interface AddChoreFormProps {
+  hideAssignees: boolean;
+}
+
+function AddChoreForm({ hideAssignees }: AddChoreFormProps) {
   const { add } = useChores();
   const [name, setName] = React.useState('');
   const [delay, setDelay] = React.useState('');
@@ -372,7 +378,7 @@ function AddChoreForm() {
         onInput={(e) => setDelay((e.target as HTMLInputElement).value)}
       />
       <input
-        type="text"
+        type={hideAssignees ? 'hidden' : 'text'}
         name="assignee"
         placeholder="Assignee (optional)"
         value={assignee}
@@ -393,6 +399,9 @@ function ListView({ listId }: ListViewProps) {
   const { chores, complete, remove, created, postpone, assign } = useChores();
   const [assigneeFilter, setAssigneeFilter] = React.useState<string | null>(
     localStorage.getItem(`assigneeFilter-${listId}`) || null
+  );
+  const [hideAssignees, setHideAssignees] = React.useState<boolean>(
+    localStorage.getItem(`hideAssignees-${listId}`) === 'true'
   );
 
   async function handleClickDone(chore: Chore) {
@@ -420,6 +429,12 @@ function ListView({ listId }: ListViewProps) {
     localStorage.setItem(`assigneeFilter-${listId}`, value || '');
   }
 
+  function handleChangeHideAssignees(event: React.ChangeEvent<HTMLInputElement>) {
+    const value = event.target.checked ?? false;
+    setHideAssignees(value);
+    localStorage.setItem(`hideAssignees-${listId}`, value ? 'true' : 'false');
+  }
+
   if (chores === undefined) {
     return <div className="message">Loading...</div>;
   } else if (chores === null) {
@@ -428,9 +443,13 @@ function ListView({ listId }: ListViewProps) {
 
   const assignees = Array.from(new Set(chores.map((c) => c.assignee).filter((a) => a))) as string[];
 
-  const filteredChores = assigneeFilter
-    ? chores.filter((chore) => !chore.assignee || chore.assignee === assigneeFilter)
-    : chores;
+  let filteredChores = chores;
+  if (!hideAssignees) {
+    filteredChores = assigneeFilter
+      ? chores.filter((chore) => !chore.assignee || chore.assignee === assigneeFilter)
+      : chores;
+  }
+
   const sortedChores = [...filteredChores].sort((a, b) => choreTimeUntilDue(a) - choreTimeUntilDue(b));
 
   const dueChores = sortedChores.filter((chore) => choreDueDays(chore) < 1);
@@ -445,7 +464,7 @@ function ListView({ listId }: ListViewProps) {
           edit it.
         </DialogBox>
       )}
-      {assignees.length > 1 && (
+      {!hideAssignees && assignees.length > 1 && (
         <div className="assigneeFilter">
           View chores for{' '}
           <select value={assigneeFilter ?? ''} onChange={handleChangeAssigneeFilter}>
@@ -464,11 +483,13 @@ function ListView({ listId }: ListViewProps) {
           <ul className="chore-list">
             {dueChores.map((chore) => (
               <ChoreListItem
+                key={chore.name}
                 chore={chore}
                 onClickDone={handleClickDone}
                 onClickDelete={handleClickDelete}
                 onClickPostpone={handleClickPostpone}
                 onClickEditAssignee={handleClickEditAssignee}
+                hideAssignees={hideAssignees}
               />
             ))}
           </ul>
@@ -482,10 +503,12 @@ function ListView({ listId }: ListViewProps) {
           <ul className="chore-list">
             {doneTodayChores.map((chore) => (
               <ChoreListItem
+                key={chore.name}
                 chore={chore}
                 onClickDelete={handleClickDelete}
                 onClickPostpone={handleClickPostpone}
                 onClickEditAssignee={handleClickEditAssignee}
+                hideAssignees={hideAssignees}
               />
             ))}
           </ul>
@@ -497,17 +520,26 @@ function ListView({ listId }: ListViewProps) {
           <ul className="chore-list">
             {upcomingChores.map((chore) => (
               <ChoreListItem
+                key={chore.name}
                 chore={chore}
                 onClickDone={handleClickDone}
                 onClickDelete={handleClickDelete}
                 onClickPostpone={handleClickPostpone}
                 onClickEditAssignee={handleClickEditAssignee}
+                hideAssignees={hideAssignees}
               />
             ))}
           </ul>
         </>
       )}
-      <AddChoreForm />
+      <AddChoreForm hideAssignees={hideAssignees} />
+      <details className="chore-list-preferences">
+        <summary>Preferences</summary>
+        <label className="preference">
+          <input type="checkbox" checked={hideAssignees} onChange={handleChangeHideAssignees} />
+          <span className="preference-name">Hide Assignees</span>
+        </label>
+      </details>
     </>
   );
 }
@@ -518,6 +550,7 @@ interface ChoreListItemProps {
   onClickDelete?: (chore: Chore) => void;
   onClickPostpone?: (chore: Chore) => void;
   onClickEditAssignee?: (chore: Chore) => void;
+  hideAssignees: boolean;
 }
 
 function ChoreListItem({
@@ -526,6 +559,7 @@ function ChoreListItem({
   onClickDelete,
   onClickPostpone,
   onClickEditAssignee,
+  hideAssignees,
 }: ChoreListItemProps) {
   return (
     <li className="chore-list-item" key={chore.name}>
@@ -539,14 +573,16 @@ function ChoreListItem({
         {chore.name}
       </span>
       {choreDueDays(chore) > 0 && <span className="status">{choreStatus(chore)}</span>}
-      <span className="assignee">
-        {chore.assignee || 'anyone'}
-        {onClickEditAssignee && (
-          <button className="edit inline" onClick={() => onClickEditAssignee(chore)}>
-            ✎
-          </button>
-        )}
-      </span>
+      {!hideAssignees && (
+        <span className="assignee">
+          {chore.assignee || 'anyone'}
+          {onClickEditAssignee && (
+            <button className="edit inline" onClick={() => onClickEditAssignee(chore)}>
+              ✎
+            </button>
+          )}
+        </span>
+      )}
       {onClickDone && (
         <button className="complete" type="button" onClick={() => onClickDone(chore)}>
           ✔

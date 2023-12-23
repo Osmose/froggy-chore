@@ -4,8 +4,6 @@ import React from 'react';
 import { createRoot } from 'react-dom/client';
 import { v4 as uuidv4 } from 'uuid';
 
-import usePreferences from './usePreferences';
-
 const levelUpAudio: HTMLAudioElement = document.querySelector('#dqlevelup')!;
 function playLevelUp() {
   levelUpAudio.play();
@@ -135,8 +133,8 @@ interface ChoreInteractor {
   create(): Promise<void>;
   add(name: string, delay: number, assignee?: string): Promise<void>;
   remove(name: string): Promise<void>;
-  complete(name: string): Promise<void>;
-  postpone(name: string): Promise<void>;
+  complete(name: string, muteSounds?: boolean): Promise<void>;
+  postpone(name: string, muteSounds?: boolean): Promise<void>;
   assign(name: string, assignee: string | null): Promise<void>;
 }
 
@@ -217,7 +215,7 @@ function makeChores(): ChoreInteractor {
       setVersion(newVersion);
     },
 
-    async complete(name) {
+    async complete(name, muteSounds = false) {
       if (!listId || !chores || version === null) {
         throw new Error('Attempted to complete a chore before loading a list.');
       }
@@ -236,11 +234,13 @@ function makeChores(): ChoreInteractor {
       setChores(newChores);
       setVersion(newVersion);
 
-      const areChoresDue = newChores.some((chore) => choreDueDays(chore) < 1);
-      if (areChoresDue) {
-        playLevelUp();
-      } else {
-        playDutyComplete();
+      if (!muteSounds) {
+        const areChoresDue = newChores.some((chore) => choreDueDays(chore) < 1);
+        if (areChoresDue) {
+          playLevelUp();
+        } else {
+          playDutyComplete();
+        }
       }
     },
 
@@ -264,7 +264,7 @@ function makeChores(): ChoreInteractor {
       setVersion(newVersion);
     },
 
-    async postpone(name) {
+    async postpone(name, muteSounds = false) {
       if (!listId || !chores || version === null) {
         throw new Error('Attempted to postpone a chore before loading a list.');
       }
@@ -293,7 +293,9 @@ function makeChores(): ChoreInteractor {
       const { newVersion } = await api.postList(listId, newChores, version);
       setChores(newChores);
       setVersion(newVersion);
-      playInn();
+      if (!muteSounds) {
+        playInn();
+      }
     },
   };
 }
@@ -403,9 +405,10 @@ function ListView({ listId }: ListViewProps) {
   const [hideAssignees, setHideAssignees] = React.useState<boolean>(
     localStorage.getItem(`hideAssignees-${listId}`) === 'true'
   );
+  const [muteSounds, setMuteSounds] = React.useState<boolean>(localStorage.getItem(`muteSounds-${listId}`) === 'true');
 
   async function handleClickDone(chore: Chore) {
-    await complete(chore.name);
+    await complete(chore.name, muteSounds);
   }
 
   async function handleClickDelete(chore: Chore) {
@@ -413,7 +416,7 @@ function ListView({ listId }: ListViewProps) {
   }
 
   async function handleClickPostpone(chore: Chore) {
-    await postpone(chore.name);
+    await postpone(chore.name, muteSounds);
   }
 
   async function handleClickEditAssignee(chore: Chore) {
@@ -433,6 +436,12 @@ function ListView({ listId }: ListViewProps) {
     const value = event.target.checked ?? false;
     setHideAssignees(value);
     localStorage.setItem(`hideAssignees-${listId}`, value ? 'true' : 'false');
+  }
+
+  function handleChangeMuteSounds(event: React.ChangeEvent<HTMLInputElement>) {
+    const value = event.target.checked ?? false;
+    setMuteSounds(value);
+    localStorage.setItem(`muteSounds-${listId}`, value ? 'true' : 'false');
   }
 
   if (chores === undefined) {
@@ -538,6 +547,10 @@ function ListView({ listId }: ListViewProps) {
         <label className="preference">
           <input type="checkbox" checked={hideAssignees} onChange={handleChangeHideAssignees} />
           <span className="preference-name">Hide Assignees</span>
+        </label>
+        <label className="preference">
+          <input type="checkbox" checked={muteSounds} onChange={handleChangeMuteSounds} />
+          <span className="preference-name">Mute Sounds</span>
         </label>
       </details>
     </>

@@ -567,12 +567,9 @@ function ListView({ listId }: ListViewProps) {
 
   const assignees = Array.from(new Set(chores.map((c) => c.assignee).filter((a) => a))) as string[];
 
-  let filteredChores = chores;
-  if (!hideAssignees) {
-    filteredChores = assigneeFilter
-      ? chores.filter((chore) => !chore.assignee || chore.assignee === assigneeFilter)
-      : chores;
-  }
+  const filteredChores = assigneeFilter
+    ? chores.filter((chore) => !chore.assignee || chore.assignee === assigneeFilter)
+    : chores;
 
   const sortedChores = [...filteredChores].sort((a, b) => choreTimeUntilDue(a) - choreTimeUntilDue(b));
 
@@ -588,7 +585,7 @@ function ListView({ listId }: ListViewProps) {
           edit it.
         </DialogBox>
       )}
-      {!hideAssignees && assignees.length > 1 && (
+      {assignees.length > 1 && (
         <div className="assigneeFilter">
           View chores for{' '}
           <select value={assigneeFilter ?? ''} onChange={handleChangeAssigneeFilter}>

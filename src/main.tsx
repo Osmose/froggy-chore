@@ -362,7 +362,7 @@ function DelayDatePickerProvider({ children }: { children?: React.ReactNode }) {
 
         return new Promise((resolve) => {
           dialog.addEventListener('close', () => {
-            resolve(dialog.returnValue === 'close' ? null : Date.parse(dateInput.value));
+            resolve(dialog.returnValue === 'cancel' ? null : Date.parse(dateInput.value));
           });
           setDateString('');
           dialog.showModal();

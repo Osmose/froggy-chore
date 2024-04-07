@@ -135,6 +135,7 @@ interface ChoreInteractor {
   remove(name: string): Promise<void>;
   complete(name: string, muteSounds?: boolean): Promise<void>;
   postpone(name: string, muteSounds?: boolean): Promise<void>;
+  setDue(name: string, dueDate: Date, muteSounds?: boolean): Promise<void>;
   assign(name: string, assignee: string | null): Promise<void>;
 }
 
@@ -148,6 +149,7 @@ class NullChoreInteractor implements ChoreInteractor {
   async remove() {}
   async complete() {}
   async postpone() {}
+  async setDue() {}
   async assign() {}
 }
 
@@ -297,11 +299,113 @@ function makeChores(): ChoreInteractor {
         playInn();
       }
     },
+
+    async setDue(name, dueDate, muteSounds = false) {
+      if (!listId || !chores || version === null) {
+        throw new Error('Attempted to postpone a chore before loading a list.');
+      }
+
+      const newChores = chores.map((chore) => {
+        if (chore.name !== name) {
+          return chore;
+        }
+
+        const dayMs = 24 * 60 * 60 * 1000;
+        const newLastDone = new Date(dueDate.getTime() + dayMs - chore.delay * dayMs);
+
+        return {
+          ...chore,
+          lastDone: newLastDone,
+        };
+      });
+      const { newVersion } = await api.postList(listId, newChores, version);
+      setChores(newChores);
+      setVersion(newVersion);
+      if (!muteSounds) {
+        playInn();
+      }
+    },
   };
 }
 
 function useChores(): ChoreInteractor {
   return React.useContext(ChoreContext);
+}
+
+interface DelayDatePicker {
+  prompt(): Promise<number | null>;
+}
+
+const NullDelayDatePicker = {
+  async prompt() {
+    return null;
+  },
+};
+
+const DelayDatePickerContext = React.createContext<DelayDatePicker>(NullDelayDatePicker);
+
+function DelayDatePickerProvider({ children }: { children?: React.ReactNode }) {
+  const dialogRef = React.useRef<HTMLDialogElement | null>(null);
+
+  // Having both of these is kinda dumb but I don't feel like refactoring to be smarter
+  const dateInputRef = React.useRef<HTMLInputElement | null>(null);
+  const [dateString, setDateString] = React.useState('');
+
+  const delayDatePicker = React.useMemo(() => {
+    return {
+      async prompt(): Promise<number | null> {
+        const dialog = dialogRef.current;
+        const dateInput = dateInputRef.current;
+        if (!dialog || !dateInput) {
+          return null;
+        }
+
+        return new Promise((resolve) => {
+          dialog.addEventListener('close', () => {
+            resolve(dialog.returnValue === 'close' ? null : Date.parse(dateInput.value));
+          });
+          setDateString('');
+          dialog.showModal();
+        });
+      },
+    };
+  }, []);
+
+  const handleClickDialog = React.useCallback((event: React.MouseEvent) => {
+    if (event.target === dialogRef.current) {
+      dialogRef.current.close('cancel');
+    }
+  }, []);
+
+  const handleChangeDate = React.useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
+    setDateString(event.target.value);
+  }, []);
+
+  return (
+    <DelayDatePickerContext.Provider value={delayDatePicker}>
+      <dialog className="date-picker-dialog" ref={dialogRef} onClick={handleClickDialog}>
+        <form className="date-picker-contents">
+          <div className="date-picker-prompt">
+            Delay chore until
+            <input ref={dateInputRef} type="date" value={dateString} onChange={handleChangeDate} />
+          </div>
+          <div className="date-picker-choices">
+            <button className="cancel" value="cancel" formMethod="dialog">
+              Cancel
+            </button>
+            <button className="ok" value="default" formMethod="dialog" disabled={dateString === null}>
+              OK
+            </button>
+          </div>
+        </form>
+      </dialog>
+      {children}
+    </DelayDatePickerContext.Provider>
+  );
+}
+
+function useDelayDatePicker() {
+  return React.useContext(DelayDatePickerContext);
 }
 
 function DialogBox({ children }) {
@@ -398,7 +502,7 @@ interface ListViewProps {
 }
 
 function ListView({ listId }: ListViewProps) {
-  const { chores, complete, remove, created, postpone, assign } = useChores();
+  const { chores, complete, remove, created, postpone, setDue, assign } = useChores();
   const [assigneeFilter, setAssigneeFilter] = React.useState<string | null>(
     localStorage.getItem(`assigneeFilter-${listId}`) || null
   );
@@ -406,6 +510,7 @@ function ListView({ listId }: ListViewProps) {
     localStorage.getItem(`hideAssignees-${listId}`) === 'true'
   );
   const [muteSounds, setMuteSounds] = React.useState<boolean>(localStorage.getItem(`muteSounds-${listId}`) === 'true');
+  const delayDatePicker = useDelayDatePicker();
 
   async function handleClickDone(chore: Chore) {
     await complete(chore.name, muteSounds);
@@ -417,6 +522,16 @@ function ListView({ listId }: ListViewProps) {
 
   async function handleClickPostpone(chore: Chore) {
     await postpone(chore.name, muteSounds);
+  }
+
+  async function handleHoldPostpone(chore: Chore) {
+    const newDueDateMs = await delayDatePicker.prompt();
+    if (!newDueDateMs) {
+      return;
+    }
+
+    const newDueDate = new Date(newDueDateMs);
+    await setDue(chore.name, newDueDate, muteSounds);
   }
 
   async function handleClickEditAssignee(chore: Chore) {
@@ -497,6 +612,7 @@ function ListView({ listId }: ListViewProps) {
                 onClickDone={handleClickDone}
                 onClickDelete={handleClickDelete}
                 onClickPostpone={handleClickPostpone}
+                onHoldPostpone={handleHoldPostpone}
                 onClickEditAssignee={handleClickEditAssignee}
                 hideAssignees={hideAssignees}
               />
@@ -516,6 +632,7 @@ function ListView({ listId }: ListViewProps) {
                 chore={chore}
                 onClickDelete={handleClickDelete}
                 onClickPostpone={handleClickPostpone}
+                onHoldPostpone={handleHoldPostpone}
                 onClickEditAssignee={handleClickEditAssignee}
                 hideAssignees={hideAssignees}
               />
@@ -534,6 +651,7 @@ function ListView({ listId }: ListViewProps) {
                 onClickDone={handleClickDone}
                 onClickDelete={handleClickDelete}
                 onClickPostpone={handleClickPostpone}
+                onHoldPostpone={handleHoldPostpone}
                 onClickEditAssignee={handleClickEditAssignee}
                 hideAssignees={hideAssignees}
               />
@@ -562,6 +680,7 @@ interface ChoreListItemProps {
   onClickDone?: (chore: Chore) => void;
   onClickDelete?: (chore: Chore) => void;
   onClickPostpone?: (chore: Chore) => void;
+  onHoldPostpone?: (chore: Chore) => void;
   onClickEditAssignee?: (chore: Chore) => void;
   hideAssignees: boolean;
 }
@@ -571,6 +690,7 @@ function ChoreListItem({
   onClickDone,
   onClickDelete,
   onClickPostpone,
+  onHoldPostpone,
   onClickEditAssignee,
   hideAssignees,
 }: ChoreListItemProps) {
@@ -590,28 +710,92 @@ function ChoreListItem({
         <span className="assignee">
           {chore.assignee || 'anyone'}
           {onClickEditAssignee && (
-            <button className="edit inline" onClick={() => onClickEditAssignee(chore)}>
+            <ChoreListButton className="edit inline" onClick={() => onClickEditAssignee(chore)}>
               ✎
-            </button>
+            </ChoreListButton>
           )}
         </span>
       )}
       {onClickDone && (
-        <button className="complete" type="button" onClick={() => onClickDone(chore)}>
+        <ChoreListButton className="complete" type="button" onClick={() => onClickDone(chore)}>
           ✔
-        </button>
+        </ChoreListButton>
       )}
       {onClickPostpone && (
-        <button className="postpone" type="button" onClick={() => onClickPostpone(chore)}>
+        <ChoreListButton
+          className="postpone"
+          type="button"
+          onClick={() => onClickPostpone(chore)}
+          onHold={onHoldPostpone ? () => onHoldPostpone(chore) : undefined}
+        >
           +
-        </button>
+        </ChoreListButton>
       )}
       {onClickDelete && (
-        <button className="delete" type="button" onClick={() => onClickDelete(chore)}>
+        <ChoreListButton className="delete" type="button" onClick={() => onClickDelete(chore)}>
           ✖
-        </button>
+        </ChoreListButton>
       )}
     </li>
+  );
+}
+
+interface ChoreListButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+  children?: React.ReactNode;
+  onClick?: () => any;
+  onHold?: () => any;
+  holdDelay?: number;
+}
+
+function ChoreListButton({ children, onClick, onHold, holdDelay = 300, ...htmlProps }: ChoreListButtonProps) {
+  const handlePointerDown = React.useCallback(
+    (event: React.MouseEvent) => {
+      // Call hold after holdDelay seconds
+      const downTime = Date.now();
+      const holdTimeout = setTimeout(() => {
+        onHold?.();
+      }, holdDelay);
+
+      // Call click and cancel hold if pointer up is within holdDelay
+      const pointerUpCallback = () => {
+        if (Date.now() - downTime < holdDelay) {
+          onClick?.();
+          clearTimeout(holdTimeout);
+        }
+      };
+      event.target.addEventListener('pointerup', pointerUpCallback, { once: true });
+
+      // Cancel both click and hold if the pointer leaves the button
+      event.target.addEventListener(
+        'pointerout',
+        () => {
+          clearTimeout(holdTimeout);
+          event.target.removeEventListener('pointerup', pointerUpCallback);
+        },
+        { once: true }
+      );
+
+      // If any props change, cancel click and hold
+      return () => {
+        clearTimeout(holdTimeout);
+        event.target.removeEventListener('pointerup', pointerUpCallback);
+      };
+    },
+    [holdDelay, onClick, onHold]
+  );
+
+  // Preserve native click behavior
+  if (onClick && !onHold) {
+    return (
+      <button {...htmlProps} onClick={onClick}>
+        {children}
+      </button>
+    );
+  }
+  return (
+    <button {...htmlProps} onPointerDown={handlePointerDown}>
+      {children}
+    </button>
   );
 }
 
@@ -628,14 +812,16 @@ function App() {
 
   return (
     <ChoreContext.Provider value={choreInteractor}>
-      <h1 className="header">
-        <img
-          className="froggy-rotated"
-          src="https://cdn.glitch.com/59c2bae2-f034-4836-ac6d-553a16963ad6%2Ffroggy-chore-rotated.png?v=1606669566496"
-        />
-        <a href="/">Froggy Chore</a>
-      </h1>
-      {!listId ? <Welcome /> : <ListView listId={listId} />}
+      <DelayDatePickerProvider>
+        <h1 className="header">
+          <img
+            className="froggy-rotated"
+            src="https://cdn.glitch.com/59c2bae2-f034-4836-ac6d-553a16963ad6%2Ffroggy-chore-rotated.png?v=1606669566496"
+          />
+          <a href="/">Froggy Chore</a>
+        </h1>
+        {!listId ? <Welcome /> : <ListView listId={listId} />}
+      </DelayDatePickerProvider>
     </ChoreContext.Provider>
   );
 }

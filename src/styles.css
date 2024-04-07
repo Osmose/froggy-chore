@@ -253,3 +253,76 @@ input[type='checkbox'] {
   margin-right: 10px;
   vertical-align: middle;
 }
+
+.date-picker-dialog {
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+
+.date-picker-contents {
+  border-color: #7d4900;
+  border-width: 3px;
+  border-style: solid;
+  border-radius: 6px;
+  padding: 10px;
+  background: #ffffa5;
+  color: #7d4900;
+}
+
+.date-picker-dialog::backdrop {
+  background: rgba(0, 0, 0, 0.3);
+}
+
+.date-picker-dialog input {
+  margin-left: 1em;
+  vertical-align: bottom;
+  border-width: 3px;
+  border-style: solid;
+  border-radius: 6px;
+  padding: 6px 10px;
+}
+
+.date-picker-prompt {
+  margin-bottom: 10px;
+}
+
+.date-picker-choices {
+  text-align: right;
+}
+
+.date-picker-choices button {
+  padding-left: 10px;
+  height: 32px;
+  margin-left: 4px;
+}
+
+.date-picker-choices button.cancel {
+  color: #833100;
+  border-color: #833100;
+  background: #ff4200;
+}
+
+.date-picker-choices button.cancel:active {
+  color: #ff4200;
+  border-color: #ff4200;
+  background: #833100;
+}
+
+.date-picker-choices button.ok {
+  color: #0163c6;
+  border-color: #0163c6;
+  background: #64a5ff;
+}
+
+.date-picker-choices button.ok:active {
+  color: #64a5ff;
+  border-color: #64a5ff;
+  background: #0163c6;
+}
+
+.date-picker-choices button.ok:disabled {
+  color: #525252;
+  border-color: #525252;
+  background: #949494;
+}

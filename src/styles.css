@@ -72,7 +72,7 @@ h2 {
   flex: 2;
   min-width: 0;
   overflow: hidden;
-  text-overflow: ellipsis;
+  text-overflow: clip;
 }
 
 .chore-list-item .status {

@@ -64,19 +64,21 @@ const postgresDriver = {
   },
 
   async getList(listId) {
-    return sql`SELECT * FROM lists WHERE listId = ${listId}`[0];
+    return (await sql`SELECT * FROM lists WHERE listId = ${listId}`)[0];
   },
 
   async upsertList({ listId, json, version }) {
-    return sql`
+    return (
+      await sql`
       INSERT INTO
         lists (listId, json)
       VALUES (${listId}, ${json})
       ON CONFLICT(listId) DO UPDATE
-        SET json = ${json}, version = version + 1
-        WHERE version = ${version}
+        SET json = ${json}, version = ${version} + 1
+        WHERE lists.version = ${version}
       RETURNING *
-    `.length;
+    `
+    ).length;
   },
 };
 

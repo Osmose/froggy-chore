@@ -51,14 +51,14 @@ const postgresDriver = {
   upsertListQuery: null,
 
   async init() {
-    await sql(`
+    await sql`
       CREATE TABLE IF NOT EXISTS lists (
         id SERIAL PRIMARY KEY,
         listId VARCHAR(255) NOT NULL UNIQUE,
         json TEXT NOT NULL,
         version INTEGER NOT NULL DEFAULT 0
       );
-    `);
+    `;
   },
 
   async getList(listId) {

@@ -173,10 +173,10 @@ function makeChores(): ChoreInteractor {
     async create() {
       const listId = uuidv4();
       const chores = [];
-      const newList = await api.postList(listId, chores, 0);
+      const { version } = await api.postList(listId, chores, 0);
       setChores([]);
       setListId(listId);
-      setVersion(newList.version);
+      setVersion(version);
       setCreated(true);
       history.pushState(null, '', `?listId=${listId}`);
     },
@@ -190,7 +190,7 @@ function makeChores(): ChoreInteractor {
 
       // I know, I'm risking a race condition here but I'm not getting paid for this
       const newChores = [...chores, chore];
-      const { newVersion } = await api.postList(listId, newChores, version);
+      const { version: newVersion } = await api.postList(listId, newChores, version);
       setChores(newChores);
       setVersion(newVersion);
     },
@@ -201,7 +201,7 @@ function makeChores(): ChoreInteractor {
       }
 
       const newChores = chores.filter((chore) => chore.name !== name);
-      const { newVersion } = await api.postList(listId, newChores, version);
+      const { version: newVersion } = await api.postList(listId, newChores, version);
       setChores(newChores);
       setVersion(newVersion);
     },
@@ -221,7 +221,7 @@ function makeChores(): ChoreInteractor {
           lastDone: new Date(),
         };
       });
-      const { newVersion } = await api.postList(listId, newChores, version);
+      const { version: newVersion } = await api.postList(listId, newChores, version);
       setChores(newChores);
       setVersion(newVersion);
     },
@@ -241,7 +241,7 @@ function makeChores(): ChoreInteractor {
           assignee,
         };
       });
-      const { newVersion } = await api.postList(listId, newChores, version);
+      const { version: newVersion } = await api.postList(listId, newChores, version);
       setChores(newChores);
       setVersion(newVersion);
     },
@@ -272,7 +272,7 @@ function makeChores(): ChoreInteractor {
           lastDone: newLastDone,
         };
       });
-      const { newVersion } = await api.postList(listId, newChores, version);
+      const { version: newVersion } = await api.postList(listId, newChores, version);
       setChores(newChores);
       setVersion(newVersion);
     },
@@ -295,7 +295,7 @@ function makeChores(): ChoreInteractor {
           lastDone: newLastDone,
         };
       });
-      const { newVersion } = await api.postList(listId, newChores, version);
+      const { version: newVersion } = await api.postList(listId, newChores, version);
       setChores(newChores);
       setVersion(newVersion);
     },

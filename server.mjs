@@ -34,6 +34,7 @@ const sqliteDriver = {
       ON CONFLICT(listId) DO UPDATE
         SET json = $json, version = version + 1
         WHERE version = $version
+      RETURNING *
     `);
   },
 
@@ -42,7 +43,7 @@ const sqliteDriver = {
   },
 
   async upsertList({ listId, json, version }) {
-    return this.upsertListQuery.run({ listId, json, version }).changes;
+    return this.upsertListQuery.all({ listId, json, version });
   },
 };
 
@@ -68,8 +69,7 @@ const postgresDriver = {
   },
 
   async upsertList({ listId, json, version }) {
-    return (
-      await sql`
+    return sql`
       INSERT INTO
         lists (listId, json)
       VALUES (${listId}, ${json})
@@ -77,8 +77,7 @@ const postgresDriver = {
         SET json = ${json}, version = ${version} + 1
         WHERE lists.version = ${version}
       RETURNING *
-    `
-    ).length;
+    `;
   },
 };
 
@@ -107,12 +106,13 @@ app.post('/api/list/:listId', async (request, response) => {
   const listId = request.params.listId;
   const { list, version } = request.body;
   const changes = await dbDriver.upsertList({ listId: listId, json: JSON.stringify(list), version: version });
-  if (changes < 1) {
+  if (changes.length < 1) {
     response.sendStatus(409);
     return;
   }
 
-  response.type('application/json').send({ newVersion: version + 1 });
+  const newList = changes[0];
+  response.type('application/json').send({ list: JSON.parse(newList.json), version: newList.version });
 });
 
 const listener = ViteExpress.listen(app, process.env.PORT || 8000, () => {

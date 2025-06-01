@@ -19,9 +19,31 @@ body {
 }
 
 #container {
-  padding: 0 10px;
-  margin: 4em auto;
+}
+
+.layout {
+  padding: 10px;
+  margin: 0 auto;
   max-width: 960px;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.header {
+  padding-top: 1em;
+  flex: 0 0 auto;
+}
+
+.footer {
+  padding-top: 2em;
+  flex: 0 0 auto;
+  text-align: center;
+}
+
+.content {
+  flex: 1;
 }
 
 a {
@@ -36,6 +58,7 @@ a {
 h1 {
   font-size: 56px;
   text-align: center;
+  margin: 0;
 }
 
 h2 {

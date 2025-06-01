@@ -768,11 +768,18 @@ function App() {
   return (
     <ChoreContext.Provider value={choreInteractor}>
       <DelayDatePickerProvider>
-        <h1 className="header">
-          <img className="froggy-rotated" src={froggyChoreRotatedUrl} />
-          <a href="/">Froggy Chore</a>
-        </h1>
-        {!listId ? <Welcome /> : <ListView listId={listId} />}
+        <div className="layout">
+          <header className="header">
+            <h1 className="header">
+              <img className="froggy-rotated" src={froggyChoreRotatedUrl} />
+              <a href="/">Froggy Chore</a>
+            </h1>
+          </header>
+          <main className="content">{!listId ? <Welcome /> : <ListView listId={listId} />}</main>
+          <footer className="footer">
+            Made by <a href="https://osmose.ceo">Osmose</a>.
+          </footer>
+        </div>
       </DelayDatePickerProvider>
     </ChoreContext.Provider>
   );

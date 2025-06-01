@@ -1,31 +1,30 @@
-Welcome to Glitch
-=================
+# Froggy Chore
 
-Click `Show` in the header to see your app live. Updates to your code will instantly deploy and update live.
+Froggy Chore can help you remember when to do your chores! Check it out at [froggychore.com](https://froggychore.com/).
 
-**Glitch** is the friendly community where you'll build the app of your dreams. Glitch lets you instantly create, remix, edit, and host an app, bot or site, and you can invite collaborators or helpers to simultaneously edit code with you.
+## Local Development
 
-Find out more [about Glitch](https://glitch.com/about).
+To set up a local development instance of Froggy Chore:
 
+1. Install [Bun](https://bun.sh/) v1.2.15 or higher.
+2. Clone the repo:
+   ```sh
+   git clone https://github.com/Osmose/froggy-chore.git
+   cd froggy-chore
+   ```
+3. Install dependencies:
+   ```sh
+   bun install
+   ```
 
-Your Project
-------------
+Once these steps are done you can run the local development server by running:
 
-On the front-end,
-- edit `public/client.js`, `public/style.css` and `views/index.html`
-- drag in `assets`, like images or music, to add them to your project
+```sh
+bun dev
+```
 
-On the back-end,
-- your app starts at `server.js`
-- add frameworks and packages in `package.json`
-- safely store app secrets in `.env` (nobody can see this but you and people you invite)
+Froggy Chore should be available at http://localhost:8000 when the development server is running.
 
-This app has a database!
-- this app uses sqlite but you can power your apps with [a number of other storage options](https://glitch.com/storage)
-- `sqlite.db` is created and put into the `.data` folder, a hidden directory whose contents aren’t copied when a project is remixed. you can see the contents of `.data` in the console under "Logs"
+## License
 
-
-Made by [Glitch](https://glitch.com/)
--------------------
-
-\ ゜o゜)ノ
+Froggy Chore is distributed under the [ISC license](LICENSE).

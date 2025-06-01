@@ -3,7 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "bun --watch server.mjs"
+    "dev": "bun --watch server.mjs",
+    "build": "bun install && bun vite build",
+    "start": "bun server.mjs"
   },
   "dependencies": {
     "body-parser": "^2.2.0",

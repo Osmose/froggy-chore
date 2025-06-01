@@ -1,3 +1,4 @@
 node_modules
-.data
 dist
+sqlite.db
+.DS_store

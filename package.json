@@ -1,46 +1,26 @@
 {
   "name": "froggy-chore",
-  "version": "0.0.2",
-  "description": "A simple Node app with SQLite as a database management system, instantly up and running.",
-  "main": "server.js",
+  "version": "0.1.0",
+  "private": true,
   "scripts": {
-    "start": "NODE_ENV=production node server.mjs",
-    "dev": "nodemon server.mjs",
-    "postinstall": "vite build"
+    "dev": "bun --watch server.mjs"
   },
   "dependencies": {
-    "body-parser": "^1.20.2",
-    "express": "^4.18.2",
-    "nodemon": "^3.0.1",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "sqlite": "^5.1.1",
-    "sqlite3": "^5.1.6",
-    "uuid": "^9.0.1",
-    "vite-express": "^0.11.0"
-  },
-  "engines": {
-    "node": "16.x"
-  },
-  "repository": {
-    "url": "https://glitch.com/edit/#!/hello-sqlite"
+    "body-parser": "^2.2.0",
+    "express": "^5.1.0",
+    "nodemon": "^3.1.10",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "uuid": "^11.1.0",
+    "vite-express": "^0.21.1"
   },
   "license": "MIT",
-  "keywords": [
-    "node",
-    "glitch",
-    "express"
-  ],
-  "nodemonConfig": {
-    "watch": [
-      "server.mjs"
-    ]
-  },
   "devDependencies": {
-    "@types/react": "^18.2.37",
-    "@types/uuid": "^9.0.7",
-    "eslint": "^8.53.0",
-    "typescript": "^5.2.2",
-    "vite": "^4.5.0"
+    "@types/bun": "^1.2.15",
+    "@types/react": "^19.1.6",
+    "@types/uuid": "^10.0.0",
+    "eslint": "^9.28.0",
+    "typescript": "^5.8.3",
+    "vite": "^6.3.5"
   }
 }

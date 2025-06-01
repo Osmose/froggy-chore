@@ -1,7 +1,7 @@
 @font-face {
     font-family: 'Slapface';
-    src: url('https://cdn.glitch.com/59c2bae2-f034-4836-ac6d-553a16963ad6%2Fslapface-webfont.woff2?v=1579410305700') format('woff2'),
-         url('https://cdn.glitch.com/59c2bae2-f034-4836-ac6d-553a16963ad6%2Fslapface-webfont.woff?v=1579410305725') format('woff');
+    src: url('assets/slapface-webfont.woff2') format('woff2'),
+         url('assets/slapface-webfont.woff') format('woff');
     font-weight: normal;
     font-style: normal;
 }
@@ -172,7 +172,7 @@ select {
 
 .box-border {
   border: 32px solid transparent;
-  border-image-source: url("https://cdn.glitch.com/59c2bae2-f034-4836-ac6d-553a16963ad6%2Ffroggy-border.png?v=1579422280072");
+  border-image-source: url("assets/froggy-border.png");
   border-image-slice: 32;
   border-image-repeat: round;
   border-image-width: 32px;

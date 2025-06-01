@@ -4,20 +4,9 @@ import React from 'react';
 import { createRoot } from 'react-dom/client';
 import { v4 as uuidv4 } from 'uuid';
 
-const levelUpAudio: HTMLAudioElement = document.querySelector('#dqlevelup')!;
-function playLevelUp() {
-  levelUpAudio.play();
-}
-
-const innAudio: HTMLAudioElement = document.querySelector('#ff7inn')!;
-function playInn() {
-  innAudio.play();
-}
-
-const dutyCompleteAudio: HTMLAudioElement = document.querySelector('#dutycomplete')!;
-function playDutyComplete() {
-  dutyCompleteAudio.play();
-}
+import frogPortraitUrl from './assets/frog-portrait.png';
+import froggyFaviconUrl from './assets/froggy-favicon.png';
+import froggyChoreRotatedUrl from './assets/froggy-chore-rotated.png';
 
 interface Chore {
   name: string;
@@ -133,9 +122,9 @@ interface ChoreInteractor {
   create(): Promise<void>;
   add(name: string, delay: number, assignee?: string): Promise<void>;
   remove(name: string): Promise<void>;
-  complete(name: string, muteSounds?: boolean): Promise<void>;
-  postpone(name: string, muteSounds?: boolean): Promise<void>;
-  setDue(name: string, dueDate: Date, muteSounds?: boolean): Promise<void>;
+  complete(name: string): Promise<void>;
+  postpone(name: string): Promise<void>;
+  setDue(name: string, dueDate: Date): Promise<void>;
   assign(name: string, assignee: string | null): Promise<void>;
 }
 
@@ -217,7 +206,7 @@ function makeChores(): ChoreInteractor {
       setVersion(newVersion);
     },
 
-    async complete(name, muteSounds = false) {
+    async complete(name) {
       if (!listId || !chores || version === null) {
         throw new Error('Attempted to complete a chore before loading a list.');
       }
@@ -235,15 +224,6 @@ function makeChores(): ChoreInteractor {
       const { newVersion } = await api.postList(listId, newChores, version);
       setChores(newChores);
       setVersion(newVersion);
-
-      if (!muteSounds) {
-        const areChoresDue = newChores.some((chore) => choreDueDays(chore) < 1);
-        if (areChoresDue) {
-          playLevelUp();
-        } else {
-          playDutyComplete();
-        }
-      }
     },
 
     async assign(name, assignee) {
@@ -266,7 +246,7 @@ function makeChores(): ChoreInteractor {
       setVersion(newVersion);
     },
 
-    async postpone(name, muteSounds = false) {
+    async postpone(name) {
       if (!listId || !chores || version === null) {
         throw new Error('Attempted to postpone a chore before loading a list.');
       }
@@ -295,12 +275,9 @@ function makeChores(): ChoreInteractor {
       const { newVersion } = await api.postList(listId, newChores, version);
       setChores(newChores);
       setVersion(newVersion);
-      if (!muteSounds) {
-        playInn();
-      }
     },
 
-    async setDue(name, dueDate, muteSounds = false) {
+    async setDue(name, dueDate) {
       if (!listId || !chores || version === null) {
         throw new Error('Attempted to postpone a chore before loading a list.');
       }
@@ -321,9 +298,6 @@ function makeChores(): ChoreInteractor {
       const { newVersion } = await api.postList(listId, newChores, version);
       setChores(newChores);
       setVersion(newVersion);
-      if (!muteSounds) {
-        playInn();
-      }
     },
   };
 }
@@ -412,7 +386,7 @@ function DialogBox({ children }) {
   return (
     <div className="box-border dialog-box">
       <div className="portrait">
-        <img src="https://cdn.glitch.com/59c2bae2-f034-4836-ac6d-553a16963ad6%2Ffrog-portrait.png?v=1579411082193" />
+        <img src={frogPortraitUrl} />
       </div>
       <div className="speech">
         <p id="frog-say">{children}</p>
@@ -509,11 +483,10 @@ function ListView({ listId }: ListViewProps) {
   const [hideAssignees, setHideAssignees] = React.useState<boolean>(
     localStorage.getItem(`hideAssignees-${listId}`) === 'true'
   );
-  const [muteSounds, setMuteSounds] = React.useState<boolean>(localStorage.getItem(`muteSounds-${listId}`) === 'true');
   const delayDatePicker = useDelayDatePicker();
 
   async function handleClickDone(chore: Chore) {
-    await complete(chore.name, muteSounds);
+    await complete(chore.name);
   }
 
   async function handleClickDelete(chore: Chore) {
@@ -521,7 +494,7 @@ function ListView({ listId }: ListViewProps) {
   }
 
   async function handleClickPostpone(chore: Chore) {
-    await postpone(chore.name, muteSounds);
+    await postpone(chore.name);
   }
 
   async function handleHoldPostpone(chore: Chore) {
@@ -531,7 +504,7 @@ function ListView({ listId }: ListViewProps) {
     }
 
     const newDueDate = new Date(newDueDateMs);
-    await setDue(chore.name, newDueDate, muteSounds);
+    await setDue(chore.name, newDueDate);
   }
 
   async function handleClickEditAssignee(chore: Chore) {
@@ -551,12 +524,6 @@ function ListView({ listId }: ListViewProps) {
     const value = event.target.checked ?? false;
     setHideAssignees(value);
     localStorage.setItem(`hideAssignees-${listId}`, value ? 'true' : 'false');
-  }
-
-  function handleChangeMuteSounds(event: React.ChangeEvent<HTMLInputElement>) {
-    const value = event.target.checked ?? false;
-    setMuteSounds(value);
-    localStorage.setItem(`muteSounds-${listId}`, value ? 'true' : 'false');
   }
 
   if (chores === undefined) {
@@ -663,10 +630,6 @@ function ListView({ listId }: ListViewProps) {
           <input type="checkbox" checked={hideAssignees} onChange={handleChangeHideAssignees} />
           <span className="preference-name">Hide Assignees</span>
         </label>
-        <label className="preference">
-          <input type="checkbox" checked={muteSounds} onChange={handleChangeMuteSounds} />
-          <span className="preference-name">Mute Sounds</span>
-        </label>
       </details>
     </>
   );
@@ -694,12 +657,7 @@ function ChoreListItem({
   return (
     <li className="chore-list-item" key={chore.name}>
       <span className="name">
-        {choreDoneToday(chore) && (
-          <img
-            src="https://cdn.glitch.com/59c2bae2-f034-4836-ac6d-553a16963ad6%2Ffroggy-favicon.png?v=1579413854880"
-            className="done-today"
-          />
-        )}
+        {choreDoneToday(chore) && <img src={froggyFaviconUrl} className="done-today" />}
         {chore.name}
       </span>
       {choreDueDays(chore) > 0 && <span className="status">{choreStatus(chore)}</span>}
@@ -811,10 +769,7 @@ function App() {
     <ChoreContext.Provider value={choreInteractor}>
       <DelayDatePickerProvider>
         <h1 className="header">
-          <img
-            className="froggy-rotated"
-            src="https://cdn.glitch.com/59c2bae2-f034-4836-ac6d-553a16963ad6%2Ffroggy-chore-rotated.png?v=1606669566496"
-          />
+          <img className="froggy-rotated" src={froggyChoreRotatedUrl} />
           <a href="/">Froggy Chore</a>
         </h1>
         {!listId ? <Welcome /> : <ListView listId={listId} />}

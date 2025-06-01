@@ -6,6 +6,7 @@ import bodyParser from 'body-parser';
 import ViteExpress from 'vite-express';
 
 const sqliteDriver = {
+  name: 'sqlite',
   db: null,
   getListQuery: null,
   upsertListQuery: null,
@@ -46,6 +47,7 @@ const sqliteDriver = {
 };
 
 const postgresDriver = {
+  name: 'postgres',
   db: null,
   getListQuery: null,
   upsertListQuery: null,
@@ -84,6 +86,7 @@ app.use(bodyParser.json());
 
 // Initialize the database.
 const dbDriver = process.env.DB_TYPE === 'postgres' ? postgresDriver : sqliteDriver;
+console.log(`Using ${dbDriver.name} database driver`);
 await dbDriver.init();
 
 // GET /api/list/:listId

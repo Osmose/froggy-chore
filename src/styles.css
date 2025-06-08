@@ -44,6 +44,7 @@ body {
 
 .content {
   flex: 1;
+  padding-top: 1em;
 }
 
 a {
@@ -223,11 +224,11 @@ select {
   flex-direction: row;
   margin-top: 32px;
   flex-wrap: wrap;
+  gap: 8px;
 }
 
 #new-chore-form input {
   flex: 1;
-  margin-right: 8px;
 }
 
 #new-chore-form button.add {
@@ -244,7 +245,7 @@ select {
 }
 
 .chore-list-preferences {
-  margin-top: 20px;
+  margin-top: 16px;
   border: 4px solid #7d4900;
   padding: 6px 10px;
   border-radius: 6px;

@@ -777,7 +777,7 @@ function App() {
           </header>
           <main className="content">{!listId ? <Welcome /> : <ListView listId={listId} />}</main>
           <footer className="footer">
-            Made by <a href="https://osmose.ceo">Osmose</a>.
+            Made by <a href="https://osmose.ceo">Osmose</a>
           </footer>
         </div>
       </DelayDatePickerProvider>
